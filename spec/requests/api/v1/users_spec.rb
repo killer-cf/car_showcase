@@ -21,11 +21,11 @@ RSpec.describe 'api/v1/users', type: :request do
         },
         required: %w[name tax_id]
       }
-      request_body_example value: { name: 'Kilder', tax_id: '12345678912' }, name: '201', summary: '201_response'
+      request_body_example value: { name: 'Kilder', tax_id: '31.576.685/0001-42' }, name: '201', summary: '201_response'
       request_body_example value: { name: 'Kilder' }, name: '422', summary: '422_response'
 
       response '201', 'user created' do
-        let(:user) { { name: 'foo', tax_id: 'bar' } }
+        let(:user) { { name: 'foo', tax_id: '31.576.685/0001-42' } }
         run_test!
       end
 
@@ -42,7 +42,7 @@ RSpec.describe 'api/v1/users', type: :request do
     get('show user') do
       tags 'Users'
       response(200, 'successful') do
-        example 'application/json', :example_key, { id: 1, name: 'Kilder', tax_id: '12345678912' }
+        example 'application/json', :example_key, { id: 1, name: 'Kilder', tax_id: '31.576.685/0001-42' }
         schema type: :object,
           properties: {
             id: { type: :integer },
@@ -51,7 +51,7 @@ RSpec.describe 'api/v1/users', type: :request do
           },
           required: %w[id name tax_id]
 
-        let(:id) { User.create(name: 'Joao', tax_id: '123').id }
+        let(:id) { User.create(name: 'Joao', tax_id: '31.576.685/0001-42').id }
         run_test!
       end
     end
@@ -71,8 +71,8 @@ RSpec.describe 'api/v1/users', type: :request do
       }
 
       response(204, 'successful') do
-        let(:id) { User.create(name: 'Joao', tax_id: '123').id }
-        let(:user) { { name: 'foo', tax_id: 'bar' } }
+        let(:id) { User.create(name: 'Joao', tax_id: '31.576.685/0001-42').id }
+        let(:user) { { name: 'foo', tax_id: '452.875.860-19' } }
         run_test!
       end
     end
@@ -80,7 +80,7 @@ RSpec.describe 'api/v1/users', type: :request do
     delete('delete user') do
       tags 'Users'
       response(204, 'successful') do
-        let(:id) { User.create(name: 'Joao', tax_id: '123').id }
+        let(:id) { User.create(name: 'Joao', tax_id: '31.576.685/0001-42').id }
         run_test!
       end
     end
