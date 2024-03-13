@@ -1,0 +1,13 @@
+pt-BR:
+  inactive: Inativo
+  active: Ativo
+  sold: Vendido
+  activerecord:
+    models:
+      user: 
+        one: Usuário
+        other: Usuários
+    attributes:
+      user:
+        name: Nome
+        tax_id: CPF/CNPJ
