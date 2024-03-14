@@ -5,12 +5,12 @@ class Api::V1::CarsController < ApplicationController
   def index
     @cars = Car.all
 
-    render json: @cars
+    render json: { cars: @cars }
   end
 
   # GET /cars/1
   def show
-    render json: @car.as_json(only: %i[id name year])
+    render json: { car: @car.as_json(except: %i[status])}
   end
 
   # POST /cars
@@ -18,18 +18,18 @@ class Api::V1::CarsController < ApplicationController
     @car = Car.new(car_params)
 
     if @car.save
-      render json: @car, status: :created
+      render json: { car: @car }, status: :created
     else
-      render json: @car.errors, status: :unprocessable_entity
+      render json: { errors: @car.errors }, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /cars/1
   def update
     if @car.update(car_params)
-      render json: @car
+      render json: { car: @car }, status: 204
     else
-      render json: @car.errors, status: :unprocessable_entity
+      render json: { errors: @car.errors }, status: :unprocessable_entity
     end
   end
 
