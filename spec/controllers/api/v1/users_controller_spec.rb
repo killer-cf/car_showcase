@@ -42,8 +42,8 @@ describe Api::V1::UsersController, type: :controller do
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
         json_response = JSON.parse(response.body)
-        expect(json_response['name']).to eq('Kilder')
-        expect(json_response['tax_id']).to eq('31.576.685/0001-42')
+        expect(json_response['user']['name']).to eq('Kilder')
+        expect(json_response['user']['tax_id']).to eq('31.576.685/0001-42')
       end
     end
 
