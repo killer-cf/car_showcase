@@ -42,14 +42,20 @@ RSpec.describe 'api/v1/users', type: :request do
     get('show user') do
       tags 'Users'
       response(200, 'successful') do
-        example 'application/json', :example_key, { id: 1, name: 'Kilder', tax_id: '31.576.685/0001-42' }
+        example 'application/json', :example_key, { user: { id: 1, name: 'Kilder', tax_id: '31.576.685/0001-42' } }
         schema type: :object,
           properties: {
-            id: { type: :integer },
-            name: { type: :string },
-            tax_id: { type: :string }
+            user: {
+              type: :object,
+              properties: {
+                id: { type: :integer },
+                name: { type: :string },
+                tax_id: { type: :string }
+              },
+              required: %w[id name tax_id]
+            }
           },
-          required: %w[id name tax_id]
+          required: ['user']
 
         let(:id) { User.create(name: 'Joao', tax_id: '31.576.685/0001-42').id }
         run_test!

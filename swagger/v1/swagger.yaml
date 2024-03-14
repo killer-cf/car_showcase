@@ -40,7 +40,7 @@ paths:
                 summary: 201_response
                 value:
                   name: Kilder
-                  tax_id: '12345678912'
+                  tax_id: 31.576.685/0001-42
               '422':
                 summary: 422_response
                 value:
@@ -65,9 +65,10 @@ paths:
               examples:
                 example_key:
                   value:
-                    id: 1
-                    name: Kilder
-                    tax_id: '12345678912'
+                    user:
+                      id: 1
+                      name: Kilder
+                      tax_id: 31.576.685/0001-42
     put:
       summary: update user
       tags:
