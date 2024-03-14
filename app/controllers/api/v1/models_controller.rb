@@ -17,8 +17,6 @@ class Api::V1::ModelsController < ApplicationController
   def create
     @model = Model.new(model_params)
 
-    puts @model.inspect
-
     if @model.save
       render json: { model: @model }, status: :created
     else
