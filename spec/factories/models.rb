@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :model do
-    name { "MyString" }
-    brand { nil }
+    name { "Logan" }
+    brand
   end
 end
