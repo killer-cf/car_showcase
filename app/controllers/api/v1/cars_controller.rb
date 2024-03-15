@@ -4,6 +4,9 @@ class Api::V1::CarsController < ApplicationController
   # GET /cars
   def index
     @cars = Car.all
+    @cars = @cars.where(brand_id: params[:brand_id]) if params[:brand_id].present?
+    @cars = @cars.where(model_id: params[:model_id]) if params[:model_id].present?
+    @cars = @cars.where('search LIKE ?', "%#{params[:search]}%") if params[:search].present?
 
     render json: { cars: @cars }
   end
