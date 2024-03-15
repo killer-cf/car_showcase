@@ -3,17 +3,17 @@ class Api::V1::CarsController < ApplicationController
 
   # GET /cars
   def index
-    @cars = Car.all
+    @cars = Car.page(params[:page]).per(params[:per_page] || 20)
     @cars = @cars.where(brand_id: params[:brand_id]) if params[:brand_id].present?
     @cars = @cars.where(model_id: params[:model_id]) if params[:model_id].present?
-    @cars = @cars.where('search LIKE ?', "%#{params[:search]}%") if params[:search].present?
+    @cars = @cars.where('name LIKE ?', "%#{params[:search]}%") if params[:search].present?
 
     render json: { cars: @cars }
   end
 
   # GET /cars/1
   def show
-    render json: { car: @car.as_json(except: %i[status])}
+    render json: { car: @car.as_json(except: %i[status]) }
   end
 
   # POST /cars

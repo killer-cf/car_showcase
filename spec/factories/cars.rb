@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :car do
-    name { 'Lamborguini Aventador 2022 Nova' }
+    sequence(:name) { |n| "Car#{n}" }
     year { 2022 }
     status { 0 }
     brand { nil }
