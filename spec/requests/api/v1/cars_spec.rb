@@ -1,6 +1,23 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/cars', type: :request do
+  let(:user) { create(:user) }
+  let(:jwt) do
+    claims = {
+      iat: Time.zone.now.to_i,
+      exp: (Time.zone.now + 1.day).to_i,
+      sub: user.id
+    }
+    token = JSON::JWT.new(claims)
+    token.kid = "default"
+    token.sign($private_key, :RS256).to_s
+  end
+
+  before(:each) do
+    public_key_resolver = Keycloak.public_key_resolver
+    allow(public_key_resolver).to receive(:find_public_keys) { JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: "default")) }
+    allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['ADMIN'])
+  end
 
   path '/api/v1/cars' do
     get('list cars') do
@@ -28,6 +45,7 @@ RSpec.describe 'api/v1/cars', type: :request do
     post('create car') do
       tags 'Cars'
       consumes 'application/json'
+      parameter name: :Authorization, in: :header, type: :string, default: 'Bearer <token>'
       parameter name: :car, in: :body, schema: {
         type: :object,
         properties: {
@@ -48,6 +66,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response '201', 'car created' do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
+        let(:Authorization) { "Bearer #{jwt}" }
         let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id: } }
         run_test!
       end
@@ -55,6 +74,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response '422', 'invalid request' do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus').id }
+        let(:Authorization) { "Bearer #{jwt}" }
         let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id: } }
         run_test!
       end
@@ -63,6 +83,7 @@ RSpec.describe 'api/v1/cars', type: :request do
 
   path '/api/v1/cars/{id}' do
     parameter name: 'id', in: :path, type: :string, description: 'id'
+    parameter name: :Authorization, in: :header, type: :string, default: 'Bearer <token>'
 
     get('show car') do
       tags 'Cars'
@@ -94,6 +115,7 @@ RSpec.describe 'api/v1/cars', type: :request do
 
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
+        let(:Authorization) { "Bearer #{jwt}" }
         let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:).id }
         run_test!
       end
@@ -121,6 +143,7 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:).id }
         let(:car) { { name: 'Ford Focus 2022' } }
+        let(:Authorization) { "Bearer #{jwt}" }
         run_test!
       end
     end
@@ -131,6 +154,7 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:).id }
+        let(:Authorization) { "Bearer #{jwt}" }
         run_test!
       end
     end

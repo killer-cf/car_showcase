@@ -136,7 +136,12 @@ paths:
       summary: create car
       tags:
       - Cars
-      parameters: []
+      parameters:
+      - name: Authorization
+        in: header
+        default: Bearer <token>
+        schema:
+          type: string
       responses:
         '201':
           description: car created
@@ -186,6 +191,11 @@ paths:
       in: path
       description: id
       required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      default: Bearer <token>
       schema:
         type: string
     get:
