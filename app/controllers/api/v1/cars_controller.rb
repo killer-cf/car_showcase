@@ -1,5 +1,5 @@
 class Api::V1::CarsController < ApplicationController
-  before_action :authenticate, except: %i[index show]
+  before_action :authenticate, :require_admin!, except: %i[index show]
   before_action :set_car, only: %i[show update destroy]
 
   # GET /cars
