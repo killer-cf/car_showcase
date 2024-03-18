@@ -1,4 +1,7 @@
 class Api::V1::Stores::CarsController < ApplicationController
+  before_action :authenticate, :require_admin!
+  before_action :set_car, only: %i[update destroy]
+
   def create
     @car = Car.new(car_params)
 

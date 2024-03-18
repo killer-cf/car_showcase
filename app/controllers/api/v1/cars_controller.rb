@@ -1,23 +1,16 @@
 class Api::V1::CarsController < ApplicationController
-  before_action :authenticate, :require_admin!, except: %i[index show]
-  before_action :set_car, only: %i[show]
-
   def index
     @cars = car_filter
 
     render json: { cars: @cars }
   end
 
-  # GET /cars/1
   def show
+    @car = Car.find(params[:id])
     render json: { car: @car.as_json(except: %i[status]) }
   end
 
   private
-
-  def set_car
-    @car = Car.find(params[:id])
-  end
 
   def car_params
     params[:car][:status] = params[:car][:status].to_i

@@ -5,5 +5,6 @@ FactoryBot.define do
     status { 0 }
     brand { nil }
     model { nil }
+    store
   end
 end
