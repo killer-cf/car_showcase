@@ -13,9 +13,12 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users
-      resources :cars
+      resources :cars, only: %i[index show]
       resources :brands
       resources :models
+      resources :stores do
+        resources :cars, only: %i[create update destroy], module: :stores
+      end
     end
   end
 end
