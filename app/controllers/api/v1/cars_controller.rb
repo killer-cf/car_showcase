@@ -8,6 +8,8 @@ class Api::V1::CarsController < ApplicationController
   def show
     @car = Car.find(params[:id])
     render json: { car: @car.as_json(except: %i[status]) }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Car with id: #{params[:id]} not found" }, status: :not_found
   end
 
   private

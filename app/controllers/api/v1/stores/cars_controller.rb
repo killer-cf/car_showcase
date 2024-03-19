@@ -3,7 +3,7 @@ class Api::V1::Stores::CarsController < ApplicationController
   before_action :set_car, only: %i[update destroy]
 
   def create
-    @car = Car.new(car_params)
+    @car = authorize Car.new(car_params)
 
     if @car.save
       render json: { car: @car }, status: :created
@@ -27,7 +27,9 @@ class Api::V1::Stores::CarsController < ApplicationController
   private
 
   def set_car
-    @car = Car.find(params[:id])
+    @car = authorize Car.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Car not found' }, status: :not_found
   end
 
   def car_params

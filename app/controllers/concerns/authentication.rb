@@ -6,16 +6,21 @@ module Authentication
   end
 
   def require_admin!
-    authorize(roles: ['ADMIN'])
+    authorize_role(roles: ['ADMIN'])
   end
 
   private
 
-  def authorize(roles:)
+  def authorize_role(roles:)
     render json: { message: 'Forbidden' }, status: :forbidden unless (current_user_roles & roles).any?
   end
 
   def current_user_roles
-    Keycloak::Helper.current_user_roles(request.env)
+    Keycloak::Helper.current_user_roles(request.env) || []
+  end
+
+  def current_user
+    keycloak_id = Keycloak::Helper.current_user_id(request.env)
+    User.find_by(keycloak_id:)
   end
 end
