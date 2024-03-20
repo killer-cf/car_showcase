@@ -5,18 +5,20 @@ describe Api::V1::CarsController, type: :controller do
   let(:jwt) do
     claims = {
       iat: Time.zone.now.to_i,
-      exp: (Time.zone.now + 1.day).to_i,
-      sub: user.id
+      exp: 1.day.from_now.to_i,
+      sub: user.keycloak_id
     }
     token = JSON::JWT.new(claims)
-    token.kid = "default"
+    token.kid = 'default'
     token.sign($private_key, :RS256).to_s
   end
 
-  before(:each) do
-    request.env["REQUEST_URI"] = api_v1_cars_path
+  before do
+    request.env['REQUEST_URI'] = api_v1_cars_path
     public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) { JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: "default")) }
+    allow(public_key_resolver).to receive(:find_public_keys) {
+                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
+                                  }
   end
 
   describe 'GET #index' do

@@ -27,7 +27,7 @@ class Api::V1::BrandsController < ApplicationController
   # PATCH/PUT /brands/1
   def update
     if @brand.update(brand_params)
-      render json: { brand: @brand }, status: 204
+      render status: :no_content
     else
       render json: { errors: @brand.errors }, status: :unprocessable_entity
     end

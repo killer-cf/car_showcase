@@ -27,7 +27,7 @@ class Api::V1::StoresController < ApplicationController
   # PATCH/PUT /stores/1
   def update
     if @store.update(store_params)
-      render json: { store: @store }, status: 204
+      render status: :no_content
     else
       render json: { errors: @store.errors }, status: :unprocessable_entity
     end

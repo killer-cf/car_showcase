@@ -14,7 +14,7 @@ class Api::V1::Stores::CarsController < ApplicationController
 
   def update
     if @car.update(car_params)
-      render json: { car: @car }, status: 204
+      render status: :no_content
     else
       render json: { errors: @car.errors }, status: :unprocessable_entity
     end

@@ -5,17 +5,19 @@ RSpec.describe 'api/v1/cars', type: :request do
   let(:jwt) do
     claims = {
       iat: Time.zone.now.to_i,
-      exp: (Time.zone.now + 1.day).to_i,
-      sub: user.id
+      exp: 1.day.from_now.to_i,
+      sub: user.keycloak_id
     }
     token = JSON::JWT.new(claims)
-    token.kid = "default"
+    token.kid = 'default'
     token.sign($private_key, :RS256).to_s
   end
 
-  before(:each) do
+  before do
     public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) { JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: "default")) }
+    allow(public_key_resolver).to receive(:find_public_keys) {
+                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
+                                  }
     allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['ADMIN'])
   end
 
@@ -58,22 +60,22 @@ RSpec.describe 'api/v1/cars', type: :request do
                                                            updated_at: '2021-08-10T00:00:00.000Z',
                                                            model_id: 1 } }
         schema type: :object,
-          properties: {
-            car: {
-              type: :object,
-              properties: {
-                id: { type: :integer },
-                name: { type: :string },
-                year: { type: :integer },
-                brand_id: { type: :integer },
-                model_id: { type: :integer },
-                created_at: { type: :string },
-                updated_at: { type: :string }
-              },
-              required: %w[id name year brand_id model_id created_at updated_at]
-            }
-          },
-          required: ['car']
+               properties: {
+                 car: {
+                   type: :object,
+                   properties: {
+                     id: { type: :integer },
+                     name: { type: :string },
+                     year: { type: :integer },
+                     brand_id: { type: :integer },
+                     model_id: { type: :integer },
+                     created_at: { type: :string },
+                     updated_at: { type: :string }
+                   },
+                   required: %w[id name year brand_id model_id created_at updated_at]
+                 }
+               },
+               required: ['car']
 
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }

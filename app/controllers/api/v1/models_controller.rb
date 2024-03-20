@@ -27,7 +27,7 @@ class Api::V1::ModelsController < ApplicationController
   # PATCH/PUT /models/1
   def update
     if @model.update(model_params)
-      render json: { model: @model }, status: 204
+      render status: :no_content
     else
       render json: { errors: @model.errors }, status: :unprocessable_entity
     end
