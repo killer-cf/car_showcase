@@ -3,28 +3,28 @@ require 'rails_helper'
 describe Api::V1::UsersController, type: :controller do
   describe 'GET #index' do
     it 'returns a success response' do
-      FactoryBot.create_list(:user, 5)
+      create_list(:user, 5)
 
       get :index, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = JSON.parse(response.body)
+      json_response = response.parsed_body
       expect(json_response['users'].count).to eq(5)
     end
   end
 
   describe 'GET #show' do
     it 'returns a success response' do
-      user = FactoryBot.create(:user)
+      user = create(:user)
 
       get :show, params: { id: user.to_param }, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = JSON.parse(response.body)
-      expect(json_response['user']['name']).to eq(user.name)
-      expect(json_response['user']['tax_id']).to eq(user.tax_id)
+      json_response = response.parsed_body
+      expect(json_response['name']).to eq(user.name)
+      expect(json_response['tax_id']).to eq(user.tax_id)
     end
   end
 
@@ -41,9 +41,9 @@ describe Api::V1::UsersController, type: :controller do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = JSON.parse(response.body)
-        expect(json_response['user']['name']).to eq('Kilder')
-        expect(json_response['user']['tax_id']).to eq('31.576.685/0001-42')
+        json_response = response.parsed_body
+        expect(json_response['name']).to eq('Kilder')
+        expect(json_response['tax_id']).to eq('31.576.685/0001-42')
       end
     end
 

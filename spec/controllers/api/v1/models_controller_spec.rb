@@ -1,18 +1,16 @@
 require 'rails_helper'
 
-describe Api::V1::ModelsController, type: :controller do
+describe Api::V1::ModelsController do
   describe 'GET #index' do
     it 'returns a success response' do
-      5.times do
-        create(:model)
-      end
+      create_list(:model, 5)
 
       get :index, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = JSON.parse(response.body)
-      expect(json_response['models'].count).to eq(5)
+      json_response = response.parsed_body
+      expect(json_response.count).to eq(5)
     end
   end
 
@@ -24,9 +22,9 @@ describe Api::V1::ModelsController, type: :controller do
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = JSON.parse(response.body)
-      expect(json_response['model']['name']).to eq(model.name)
-      expect(json_response['model']['brand_id']).to eq(model.brand_id)
+      json_response = response.parsed_body
+      expect(json_response['name']).to eq(model.name)
+      expect(json_response['brand_id']).to eq(model.brand_id)
     end
   end
 
@@ -47,9 +45,9 @@ describe Api::V1::ModelsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = JSON.parse(response.body)
-        expect(json_response['model']['name']).to eq('Mustang')
-        expect(json_response['model']['brand_id']).to eq(brand_id)
+        json_response = response.parsed_body
+        expect(json_response['name']).to eq('Mustang')
+        expect(json_response['brand_id']).to eq(brand_id)
       end
     end
   end

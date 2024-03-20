@@ -21,6 +21,6 @@ module Authentication
 
   def current_user
     keycloak_id = Keycloak::Helper.current_user_id(request.env)
-    User.find_by(keycloak_id:)
+    User.find_by(keycloak_id:) if keycloak_id
   end
 end

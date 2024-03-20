@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/brands', type: :request do
+RSpec.describe 'api/v1/brands' do
   path '/api/v1/brands' do
     get('list brands') do
       tags 'Brands'
@@ -49,17 +49,13 @@ RSpec.describe 'api/v1/brands', type: :request do
                                                              created_at: '2021-08-10T00:00:00.000Z',
                                                              updated_at: '2021-08-10T00:00:00.000Z' } }
         schema type: :object,
-          properties: {
-            brand: {
-              type: :object,
-              properties: {
-                id: { type: :integer },
-                name: { type: :string }
-              },
-              required: %w[id name]
-            }
-          },
-          required: ['brand']
+               properties: {
+                 properties: {
+                   id: { type: :integer },
+                   name: { type: :string }
+                 },
+                 required: %w[id name]
+               }
 
         let(:id) { Brand.create(name: 'Pegeout').id }
         run_test!

@@ -5,12 +5,12 @@ class Api::V1::StoresController < ApplicationController
   def index
     @stores = Store.all
 
-    render json: { stores: @stores }
+    render json: @stores
   end
 
   # GET /stores/1
   def show
-    render json: { store: @store }
+    render json: @store
   end
 
   # POST /stores
@@ -18,7 +18,7 @@ class Api::V1::StoresController < ApplicationController
     @store = Store.new(store_params)
 
     if @store.save
-      render json: { store: @store }, status: :created
+      render json: @store, status: :created
     else
       render json: { errors: @store.errors }, status: :unprocessable_entity
     end

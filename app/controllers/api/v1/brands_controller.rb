@@ -10,7 +10,7 @@ class Api::V1::BrandsController < ApplicationController
 
   # GET /brands/1
   def show
-    render json: { brand: @brand }
+    render json: @brand
   end
 
   # POST /brands
@@ -18,7 +18,7 @@ class Api::V1::BrandsController < ApplicationController
     @brand = Brand.new(brand_params)
 
     if @brand.save
-      render json: { brand: @brand }, status: :created
+      render json: @brand, status: :created
     else
       render json: { errors: @brand.errors }, status: :unprocessable_entity
     end

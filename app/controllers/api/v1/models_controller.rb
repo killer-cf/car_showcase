@@ -5,12 +5,12 @@ class Api::V1::ModelsController < ApplicationController
   def index
     @models = Model.all
 
-    render json: { models: @models }
+    render json: @models
   end
 
   # GET /models/1
   def show
-    render json: { model: @model }
+    render json: @model
   end
 
   # POST /models
@@ -18,7 +18,7 @@ class Api::V1::ModelsController < ApplicationController
     @model = Model.new(model_params)
 
     if @model.save
-      render json: { model: @model }, status: :created
+      render json: @model, status: :created
     else
       render json: { errors: @model.errors }, status: :unprocessable_entity
     end

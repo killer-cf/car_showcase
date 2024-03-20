@@ -10,7 +10,7 @@ class Api::V1::UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: { user: @user }
+    render json: @user
   end
 
   # POST /users
@@ -18,7 +18,7 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      render json: { user: @user }, status: :created
+      render json: @user, status: :created
     else
       render json: { errors: @user.errors }, status: :unprocessable_entity
     end

@@ -2,12 +2,12 @@ class Api::V1::CarsController < ApplicationController
   def index
     @cars = car_filter
 
-    render json: { cars: @cars }
+    render json: @cars
   end
 
   def show
     @car = Car.find(params[:id])
-    render json: { car: @car.as_json(except: %i[status]) }
+    render json: @car
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Car with id: #{params[:id]} not found" }, status: :not_found
   end

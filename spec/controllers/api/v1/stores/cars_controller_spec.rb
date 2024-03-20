@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::Stores::CarsController, type: :controller do
+describe Api::V1::Stores::CarsController do
   let(:user) { create(:user) }
   let(:jwt) do
     claims = {
@@ -38,9 +38,9 @@ describe Api::V1::Stores::CarsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = JSON.parse(response.body)
-        expect(json_response['car']['name']).to eq('Ford Focus')
-        expect(json_response['car']['year']).to eq(2022)
+        json_response = response.parsed_body
+        expect(json_response['name']).to eq('Ford Focus')
+        expect(json_response['year']).to eq(2022)
       end
     end
 

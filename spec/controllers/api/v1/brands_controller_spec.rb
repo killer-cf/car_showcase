@@ -3,15 +3,13 @@ require 'rails_helper'
 describe Api::V1::BrandsController, type: :controller do
   describe 'GET #index' do
     it 'returns a success response' do
-      5.times do
-        create(:brand)
-      end
+      create_list(:brand, 5)
 
       get :index, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = JSON.parse(response.body)
+      json_response = response.parsed_body
       expect(json_response['brands'].count).to eq(5)
     end
   end
@@ -24,8 +22,8 @@ describe Api::V1::BrandsController, type: :controller do
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = JSON.parse(response.body)
-      expect(json_response['brand']['name']).to eq(brand.name)
+      json_response = response.parsed_body
+      expect(json_response['name']).to eq(brand.name)
     end
   end
 
@@ -44,8 +42,8 @@ describe Api::V1::BrandsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = JSON.parse(response.body)
-        expect(json_response['brand']['name']).to eq('Ford')
+        json_response = response.parsed_body
+        expect(json_response['name']).to eq('Ford')
       end
     end
   end

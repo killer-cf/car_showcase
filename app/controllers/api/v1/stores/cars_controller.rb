@@ -6,7 +6,7 @@ class Api::V1::Stores::CarsController < ApplicationController
     @car = authorize Car.new(car_params)
 
     if @car.save
-      render json: { car: @car }, status: :created
+      render json: @car, status: :created
     else
       render json: { errors: @car.errors }, status: :unprocessable_entity
     end
