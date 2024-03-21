@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  enum role: { user: 0, admin: 5, owner: 15, super: 20 }
+
   validates :name, :tax_id, presence: true
   validates :tax_id, uniqueness: true
   validates :name, length: { minimum: 3, maximum: 50 }
