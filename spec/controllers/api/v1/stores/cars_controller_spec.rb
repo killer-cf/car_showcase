@@ -25,11 +25,10 @@ describe Api::V1::Stores::CarsController do
     context 'with valid params' do
       let(:brand_id) { create(:brand).id }
       let(:model_id) { create(:model, brand_id:).id }
-      let(:store_id) { create(:store).id }
+      let(:store_id) { create(:store, user:).id }
 
       it 'creates a new Car and return it as json' do
         request.headers['Authorization'] = "Bearer #{jwt}"
-        allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['ADMIN'])
 
         expect do
           post :create, params: { car: { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id: }, store_id: },
@@ -45,11 +44,10 @@ describe Api::V1::Stores::CarsController do
     end
 
     context 'with invalid params' do
-      let(:store_id) { create(:store).id }
+      let(:store_id) { create(:store, user:).id }
 
       it 'renders a JSON response with errors for the new car' do
         request.headers['Authorization'] = "Bearer #{jwt}"
-        allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['ADMIN'])
 
         post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
         expect(response).to have_http_status(:unprocessable_entity)
@@ -67,7 +65,6 @@ describe Api::V1::Stores::CarsController do
 
       it 'unauthorized' do
         request.headers['Authorization'] = "Bearer #{jwt}"
-        allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['USER'])
 
         post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
         expect(response).to have_http_status(:forbidden)
@@ -87,9 +84,8 @@ describe Api::V1::Stores::CarsController do
 
       it 'updates the requested car' do
         request.headers['Authorization'] = "Bearer #{jwt}"
-        allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['ADMIN'])
 
-        car = create(:car, brand:, model:)
+        car = create(:car, brand:, model:, store: create(:store, user:))
         put :update, params: { id: car.to_param, store_id: car.store_id, car: new_attributes }, format: :json
         car.reload
         expect(car.name).to eq('Ford Mustang')
@@ -108,7 +104,6 @@ describe Api::V1::Stores::CarsController do
         car = create(:car, brand:, model:)
 
         request.headers['Authorization'] = "Bearer #{jwt}"
-        allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['USER'])
 
         put :update, params: { id: car.to_param, store_id: car.store_id, car: new_attributes }, format: :json
         car.reload
@@ -121,11 +116,10 @@ describe Api::V1::Stores::CarsController do
   describe 'DELETE #destroy' do
     it 'deletes the Car' do
       request.headers['Authorization'] = "Bearer #{jwt}"
-      allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['ADMIN'])
 
       brand = create(:brand)
       model = create(:model, brand:)
-      car = create(:car, brand:, model:)
+      car = create(:car, brand:, model:, store: create(:store, user:))
 
       expect do
         delete :destroy, params: { id: car.id, store_id: car.store_id }, format: :json
@@ -150,7 +144,6 @@ describe Api::V1::Stores::CarsController do
       car = create(:car, brand:, model:)
 
       request.headers['Authorization'] = "Bearer #{jwt}"
-      allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['USER'])
 
       expect do
         delete :destroy, params: { id: car.id, store_id: car.store_id }, format: :json

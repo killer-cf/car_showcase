@@ -18,7 +18,6 @@ RSpec.describe 'api/v1/cars', type: :request do
     allow(public_key_resolver).to receive(:find_public_keys) {
                                     JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
                                   }
-    allow_any_instance_of(Authentication).to receive(:current_user_roles).and_return(['ADMIN'])
   end
 
   path '/api/v1/cars' do
@@ -71,7 +70,7 @@ RSpec.describe 'api/v1/cars', type: :request do
 
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
-        let(:store_id) { create(:store).id }
+        let(:store_id) { create(:store, user:).id }
         let(:Authorization) { "Bearer #{jwt}" }
         let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
         run_test!
@@ -105,7 +104,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response '201', 'car created' do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
-        let(:store_id) { create(:store).id }
+        let(:store_id) { create(:store, user:).id }
         let(:Authorization) { "Bearer #{jwt}" }
         let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id: } }
         run_test!
@@ -114,7 +113,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response '422', 'invalid request' do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus').id }
-        let(:store_id) { create(:store).id }
+        let(:store_id) { create(:store, user:).id }
         let(:Authorization) { "Bearer #{jwt}" }
         let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id: } }
         run_test!
@@ -147,7 +146,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response(204, 'successful') do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
-        let(:store_id) { create(:store).id }
+        let(:store_id) { create(:store, user:).id }
         let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
         let(:car) { { name: 'Ford Focus 2022' } }
         let(:Authorization) { "Bearer #{jwt}" }
@@ -160,7 +159,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       response(204, 'successful') do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
-        let(:store_id) { create(:store).id }
+        let(:store_id) { create(:store, user:).id }
         let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
         let(:Authorization) { "Bearer #{jwt}" }
         run_test!
