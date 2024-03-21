@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       resources :models
       resources :stores do
         resources :cars, only: %i[create update destroy], module: :stores
+        resources :employees
       end
     end
   end
