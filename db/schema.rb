@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_21_134935) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_21_193411) do
   create_table "brands", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -36,6 +36,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_21_134935) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role", default: 0
     t.index ["store_id"], name: "index_employees_on_store_id"
     t.index ["user_id"], name: "index_employees_on_user_id"
   end
@@ -64,7 +65,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_21_134935) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "keycloak_id"
-    t.integer "role", default: 0
+    t.boolean "super", default: false
     t.index ["keycloak_id"], name: "index_users_on_keycloak_id"
   end
 

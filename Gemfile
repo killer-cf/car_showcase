@@ -62,6 +62,7 @@ end
 
 group :development do
   gem 'capybara'
+  gem 'pundit-matchers', '~> 3.1'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'rubocop-rspec'

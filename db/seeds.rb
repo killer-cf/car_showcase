@@ -1,10 +1,10 @@
 # Users
 users = [
-  { name: 'Kilder Costa', tax_id: '44300248044', keycloak_id: '4212522b-d21b-4848-bee2-38547bcf115e', role: :owner },
-  { name: 'Leticia Costa', tax_id: '69645714001', keycloak_id: 'key2', role: :owner },
-  { name: 'Joao Alfredo', tax_id: '56951210004', keycloak_id: 'key3', role: :super },
-  { name: 'Filiphe', tax_id: '23358613011', keycloak_id: 'key4', role: :admin },
-  { name: 'Danilo', tax_id: '99170375003', keycloak_id: 'key5', role: :admin }
+  { name: 'Kilder Costa', tax_id: '44300248044', keycloak_id: '4212522b-d21b-4848-bee2-38547bcf115e' },
+  { name: 'Leticia Costa', tax_id: '69645714001', keycloak_id: 'key2' },
+  { name: 'Joao Alfredo', tax_id: '56951210004', keycloak_id: 'key3', super: true },
+  { name: 'Filiphe', tax_id: '23358613011', keycloak_id: 'key4' },
+  { name: 'Danilo', tax_id: '99170375003', keycloak_id: 'key5' }
 ]
 
 users.each do |user|
@@ -23,8 +23,8 @@ end
 
 # Employees
 employees = [
-  { store_id: Store.first.id, user_id: User.find_by(role: :admin, name: 'Filiphe').id },
-  { store_id: Store.last.id, user_id: User.find_by(role: :admin, name: 'Danilo').id }
+  { store_id: Store.first.id, role: :admin, user_id: User.find_by(name: 'Filiphe').id },
+  { store_id: Store.last.id, role: :admin, user_id: User.find_by(name: 'Danilo').id }
 ]
 
 employees.each do |employee|
