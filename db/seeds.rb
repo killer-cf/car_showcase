@@ -1,6 +1,6 @@
 # Users
 users = [
-  { name: 'Kilder Costa', tax_id: '44300248044', keycloak_id: 'key1', role: :owner },
+  { name: 'Kilder Costa', tax_id: '44300248044', keycloak_id: '4212522b-d21b-4848-bee2-38547bcf115e', role: :owner },
   { name: 'Leticia Costa', tax_id: '69645714001', keycloak_id: 'key2', role: :owner },
   { name: 'Joao Alfredo', tax_id: '56951210004', keycloak_id: 'key3', role: :super },
   { name: 'Filiphe', tax_id: '23358613011', keycloak_id: 'key4', role: :admin },
