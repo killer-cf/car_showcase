@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Car, type: :model do
+RSpec.describe Car do
   describe '#valid?' do
     it { is_expected.to validate_presence_of(:name) }
 
@@ -8,13 +8,11 @@ RSpec.describe Car, type: :model do
 
     it { is_expected.to validate_presence_of(:status) }
 
-    it { is_expected.to validate_presence_of(:brand) }
+    it { is_expected.to belong_to(:brand).required(true) }
 
-    it { is_expected.to validate_presence_of(:model) }
+    it { is_expected.to belong_to(:model).required(true) }
 
-    it { should belong_to(:brand) }
-
-    it { should belong_to(:model) }
+    it { is_expected.to belong_to(:store).required(true) }
 
     it { is_expected.to validate_numericality_of(:year).is_greater_than(1900) }
 
