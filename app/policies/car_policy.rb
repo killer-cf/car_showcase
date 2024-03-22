@@ -19,6 +19,10 @@ class CarPolicy < ApplicationPolicy
     user_is_store_owner? || employee_admin?
   end
 
+  def activate?
+    user_is_store_owner? || employee_admin?
+  end
+
   private
 
   def user_is_store_owner?

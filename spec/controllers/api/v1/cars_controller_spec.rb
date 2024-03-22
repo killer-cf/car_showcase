@@ -99,4 +99,173 @@ describe Api::V1::CarsController do
       expect(json_response['year']).to eq(car.year)
     end
   end
+
+  describe 'POST #create' do
+    context 'with valid params' do
+      let(:brand_id) { create(:brand).id }
+      let(:model_id) { create(:model, brand_id:).id }
+      let(:store_id) { create(:store, user:).id }
+
+      it 'creates a new Car and return it as json' do
+        request.headers['Authorization'] = "Bearer #{jwt}"
+
+        expect do
+          post :create, params: { car: { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id: }, store_id: },
+                        format: :json
+        end.to change(Car, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        expect(response.content_type).to eq('application/json; charset=utf-8')
+        json_response = response.parsed_body
+        expect(json_response['name']).to eq('Ford Focus')
+        expect(json_response['year']).to eq(2022)
+      end
+    end
+
+    context 'with invalid params' do
+      let(:store_id) { create(:store, user:).id }
+
+      it 'renders a JSON response with errors for the new car' do
+        request.headers['Authorization'] = "Bearer #{jwt}"
+
+        post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.content_type).to eq('application/json; charset=utf-8')
+      end
+    end
+
+    context 'without authentication' do
+      let(:store_id) { create(:store).id }
+
+      it 'unauthenticated' do
+        post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it 'unauthorized' do
+        request.headers['Authorization'] = "Bearer #{jwt}"
+
+        post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
+  describe 'PUT #update' do
+    context 'with valid params' do
+      let(:brand) { create(:brand) }
+      let(:model) { create(:model, brand:) }
+      let(:store_id) { create(:store).id }
+
+      let(:new_attributes) do
+        { name: 'Ford Mustang' }
+      end
+
+      it 'updates the requested car' do
+        request.headers['Authorization'] = "Bearer #{jwt}"
+
+        car = create(:car, brand:, model:, store: create(:store, user:))
+        put :update, params: { id: car.to_param, store_id: car.store_id, car: new_attributes }, format: :json
+        car.reload
+        expect(car.name).to eq('Ford Mustang')
+      end
+
+      it 'does not update the car for unauthenticated user' do
+        car = create(:car, brand:, model:)
+
+        put :update, params: { id: car.to_param, store_id: car.store_id, car: new_attributes }, format: :json
+        car.reload
+        expect(car.name).not_to eq('Ford Mustang')
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it 'does not update the car for unauthorized user' do
+        car = create(:car, brand:, model:)
+
+        request.headers['Authorization'] = "Bearer #{jwt}"
+
+        put :update, params: { id: car.to_param, store_id: car.store_id, car: new_attributes }, format: :json
+        car.reload
+        expect(car.name).not_to eq('Ford Mustang')
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    it 'deletes the Car' do
+      request.headers['Authorization'] = "Bearer #{jwt}"
+
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, store: create(:store, user:))
+
+      expect do
+        delete :destroy, params: { id: car.id, store_id: car.store_id }, format: :json
+      end.to change(Car, :count).by(-1)
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'does not delete the car for unauthenticated user' do
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:)
+
+      expect do
+        delete :destroy, params: { id: car.id, store_id: car.store_id }, format: :json
+      end.not_to change(Car, :count)
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'does not delete the car for unauthorized user' do
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:)
+
+      request.headers['Authorization'] = "Bearer #{jwt}"
+
+      expect do
+        delete :destroy, params: { id: car.id, store_id: car.store_id }, format: :json
+      end.not_to change(Car, :count)
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe 'PATCH #activate' do
+    it 'activates the Car' do
+      request.headers['Authorization'] = "Bearer #{jwt}"
+
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, store: create(:store, user:), status: :inactive)
+
+      patch :activate, params: { id: car.id, store_id: car.store_id }, format: :json
+      car.reload
+      expect(car).to be_active
+    end
+
+    it 'does not activate the car for unauthenticated user' do
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, status: :inactive)
+
+      patch :activate, params: { id: car.id, store_id: car.store_id }, format: :json
+      car.reload
+      expect(car).not_to be_active
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'does not activate the car for unauthorized user' do
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, status: :inactive)
+
+      request.headers['Authorization'] = "Bearer #{jwt}"
+
+      patch :activate, params: { id: car.id, store_id: car.store_id }, format: :json
+      car.reload
+      expect(car).not_to be_active
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
 end

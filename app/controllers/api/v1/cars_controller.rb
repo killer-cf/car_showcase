@@ -1,4 +1,7 @@
 class Api::V1::CarsController < ApplicationController
+  before_action :authenticate, except: %i[index show]
+  before_action :set_car, only: %i[update destroy activate]
+
   def index
     @cars = car_filter
 
@@ -12,7 +15,39 @@ class Api::V1::CarsController < ApplicationController
     render json: { error: "Car with id: #{params[:id]} not found" }, status: :not_found
   end
 
+  def create
+    @car = authorize Car.new(car_params.merge(store_id: params[:store_id]))
+
+    if @car.save
+      render json: @car, status: :created
+    else
+      render json: { errors: @car.errors }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @car.update(car_params)
+      render status: :no_content
+    else
+      render json: { errors: @car.errors }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @car.destroy!
+  end
+
+  def activate
+    @car.active!
+  end
+
   private
+
+  def set_car
+    @car = authorize Car.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Car with id: #{params[:id]} not found" }, status: :not_found
+  end
 
   def car_params
     params[:car][:status] = params[:car][:status].to_i

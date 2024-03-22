@@ -75,6 +75,46 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
         run_test!
       end
+
+      put('update car') do
+        tags 'Cars'
+        consumes 'application/json'
+        produces 'application/json'
+        parameter name: :id, in: :path, type: :integer
+        parameter name: :car, in: :body, schema: {
+          type: :object,
+          properties: {
+            name: { type: :string },
+            year: { type: :integer },
+            status: { type: :integer },
+            brand_id: { type: :integer },
+            model_id: { type: :integer }
+          },
+          required: %w[name year status brand_id model_id]
+        }
+
+        response(204, 'successful') do
+          let(:brand_id) { Brand.create!(name: 'Ford').id }
+          let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
+          let(:store_id) { create(:store, user:).id }
+          let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+          let(:car) { { name: 'Ford Focus 2022' } }
+          let(:Authorization) { "Bearer #{jwt}" }
+          run_test!
+        end
+      end
+
+      delete('delete car') do
+        tags 'Cars'
+        response(204, 'successful') do
+          let(:brand_id) { Brand.create!(name: 'Ford').id }
+          let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
+          let(:store_id) { create(:store, user:).id }
+          let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+          let(:Authorization) { "Bearer #{jwt}" }
+          run_test!
+        end
+      end
     end
   end
 
@@ -121,40 +161,11 @@ RSpec.describe 'api/v1/cars', type: :request do
     end
   end
 
-  path '/api/v1/stores/{store_id}/cars/{id}' do
-    parameter name: 'store_id', in: :path, type: :string, description: 'store_id'
+  path '/api/v1/cars/{id}/activate' do
     parameter name: 'id', in: :path, type: :string, description: 'id'
     parameter name: :Authorization, in: :header, type: :string, default: 'Bearer <token>'
 
-    put('update car') do
-      tags 'Cars'
-      consumes 'application/json'
-      produces 'application/json'
-      parameter name: :id, in: :path, type: :integer
-      parameter name: :car, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          year: { type: :integer },
-          status: { type: :integer },
-          brand_id: { type: :integer },
-          model_id: { type: :integer }
-        },
-        required: %w[name year status brand_id model_id]
-      }
-
-      response(204, 'successful') do
-        let(:brand_id) { Brand.create!(name: 'Ford').id }
-        let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
-        let(:store_id) { create(:store, user:).id }
-        let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
-        let(:car) { { name: 'Ford Focus 2022' } }
-        let(:Authorization) { "Bearer #{jwt}" }
-        run_test!
-      end
-    end
-
-    delete('delete car') do
+    patch('activate car') do
       tags 'Cars'
       response(204, 'successful') do
         let(:brand_id) { Brand.create!(name: 'Ford').id }

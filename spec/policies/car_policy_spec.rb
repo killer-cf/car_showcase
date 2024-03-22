@@ -11,7 +11,7 @@ RSpec.describe CarPolicy, type: :policy do
     let(:user) { nil }
 
     it { is_expected.to permit_only_actions(%i[index show]) }
-    it { is_expected.to forbid_actions(%i[create update destroy]) }
+    it { is_expected.to forbid_actions(%i[create update destroy activate]) }
   end
 
   context 'with administrators' do
