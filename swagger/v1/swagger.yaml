@@ -132,11 +132,91 @@ paths:
                       updated_at: '2021-08-10T00:00:00.000Z'
                       brand_id: 2
                       model_id: 2
+  "/api/v1/cars/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      default: Bearer <token>
+      schema:
+        type: string
+    get:
+      summary: show car
+      tags:
+      - Cars
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                example_key:
+                  value:
+                    id: 1
+                    name: Ford Focus 2018
+                    year: 2022
+                    brand: Ford
+                    created_at: '2021-08-10T00:00:00.000Z'
+                    model: Focus
+    put:
+      summary: update car
+      tags:
+      - Cars
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                year:
+                  type: integer
+                status:
+                  type: integer
+                brand_id:
+                  type: integer
+                model_id:
+                  type: integer
+              required:
+              - name
+              - year
+              - status
+              - brand_id
+              - model_id
+    delete:
+      summary: delete car
+      tags:
+      - Cars
+      responses:
+        '204':
+          description: successful
+  "/api/v1/stores/{store_id}/cars":
     post:
       summary: create car
       tags:
       - Cars
       parameters:
+      - name: store_id
+        in: path
+        description: store_id
+        required: true
+        schema:
+          type: string
       - name: Authorization
         in: header
         default: Bearer <token>
@@ -185,7 +265,7 @@ paths:
                   year: 2022
                   status: 0
                   brand_id: 1
-  "/api/v1/cars/{id}":
+  "/api/v1/cars/{id}/activate":
     parameters:
     - name: id
       in: path
@@ -198,63 +278,28 @@ paths:
       default: Bearer <token>
       schema:
         type: string
-    get:
-      summary: show car
+    patch:
+      summary: activate car
       tags:
       - Cars
-      responses:
-        '200':
-          description: successful
-          content:
-            application/json:
-              examples:
-                example_key:
-                  value:
-                    car:
-                      id: 1
-                      name: Ford Focus
-                      year: 2022
-                      brand_id: 1
-                      created_at: '2021-08-10T00:00:00.000Z'
-                      updated_at: '2021-08-10T00:00:00.000Z'
-                      model_id: 1
-    put:
-      summary: update car
-      tags:
-      - Cars
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
       responses:
         '204':
           description: successful
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                year:
-                  type: integer
-                status:
-                  type: integer
-                brand_id:
-                  type: integer
-                model_id:
-                  type: integer
-              required:
-              - name
-              - year
-              - status
-              - brand_id
-              - model_id
-    delete:
-      summary: delete car
+  "/api/v1/cars/{id}/sell":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      default: Bearer <token>
+      schema:
+        type: string
+    patch:
+      summary: sell car
       tags:
       - Cars
       responses:
@@ -273,17 +318,16 @@ paths:
               examples:
                 example_key:
                   value:
-                    models:
-                    - id: 1
-                      name: Mustang
-                      brand_id: 1
-                      created_at: '2021-08-10T00:00:00.000Z'
-                      updated_at: '2021-08-10T00:00:00.000Z'
-                    - id: 2
-                      name: Maverick
-                      brand_id: 1
-                      created_at: '2021-08-10T00:00:00.000Z'
-                      updated_at: '2021-08-10T00:00:00.000Z'
+                  - id: 1
+                    name: Mustang
+                    brand_id: 1
+                    created_at: '2021-08-10T00:00:00.000Z'
+                    updated_at: '2021-08-10T00:00:00.000Z'
+                  - id: 2
+                    name: Maverick
+                    brand_id: 1
+                    created_at: '2021-08-10T00:00:00.000Z'
+                    updated_at: '2021-08-10T00:00:00.000Z'
     post:
       summary: Creates a model
       tags:
@@ -331,12 +375,11 @@ paths:
               examples:
                 example_key:
                   value:
-                    model:
-                      id: 1
-                      name: Mustang
-                      brand_id: 1
-                      created_at: '2021-08-10T00:00:00.000Z'
-                      updated_at: '2021-08-10T00:00:00.000Z'
+                    id: 1
+                    name: Mustang
+                    brand_id: 1
+                    created_at: '2021-08-10T00:00:00.000Z'
+                    updated_at: '2021-08-10T00:00:00.000Z'
     put:
       summary: update model
       tags:
@@ -431,10 +474,9 @@ paths:
               examples:
                 example_key:
                   value:
-                    user:
-                      id: 1
-                      name: Kilder
-                      tax_id: 31.576.685/0001-42
+                    id: 1
+                    name: Kilder
+                    tax_id: 31.576.685/0001-42
     put:
       summary: update user
       tags:

@@ -26,7 +26,7 @@ describe Api::V1::CarsController do
     let!(:models) { brands.map { |brand| create(:model, brand:) } }
     let!(:cars) do
       models.flat_map do |model|
-        create_list(:car, 5, brand: model.brand, model:)
+        create_list(:car, 5, brand: model.brand, model:, status: :active)
       end
     end
 
@@ -265,6 +265,44 @@ describe Api::V1::CarsController do
       patch :activate, params: { id: car.id, store_id: car.store_id }, format: :json
       car.reload
       expect(car).not_to be_active
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe 'PATCH #sell' do
+    it 'sells the Car' do
+      request.headers['Authorization'] = "Bearer #{jwt}"
+
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, store: create(:store, user:), status: :active)
+
+      patch :sell, params: { id: car.id, store_id: car.store_id }, format: :json
+      car.reload
+      expect(car).to be_sold
+    end
+
+    it 'does not sell the car for unauthenticated user' do
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, status: :active)
+
+      patch :sell, params: { id: car.id, store_id: car.store_id }, format: :json
+      car.reload
+      expect(car).not_to be_sold
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'does not sell the car for unauthorized user' do
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, status: :active)
+
+      request.headers['Authorization'] = "Bearer #{jwt}"
+
+      patch :sell, params: { id: car.id, store_id: car.store_id }, format: :json
+      car.reload
+      expect(car).not_to be_sold
       expect(response).to have_http_status(:forbidden)
     end
   end

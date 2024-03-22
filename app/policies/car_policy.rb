@@ -23,6 +23,10 @@ class CarPolicy < ApplicationPolicy
     user_is_store_owner? || employee_admin?
   end
 
+  def sell?
+    user_is_store_owner? || employee_admin?
+  end
+
   private
 
   def user_is_store_owner?

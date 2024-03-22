@@ -1,6 +1,6 @@
 class Api::V1::CarsController < ApplicationController
   before_action :authenticate, except: %i[index show]
-  before_action :set_car, only: %i[update destroy activate]
+  before_action :set_car, only: %i[update destroy activate sell]
 
   def index
     @cars = car_filter
@@ -41,6 +41,10 @@ class Api::V1::CarsController < ApplicationController
     @car.active!
   end
 
+  def sell
+    @car.sold!
+  end
+
   private
 
   def set_car
@@ -55,7 +59,7 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def car_filter
-    @cars = Car.page(params[:page]).per(params[:per_page] || 20)
+    @cars = Car.active.page(params[:page]).per(params[:per_page] || 20)
 
     if params[:store].present?
       store = Store.find_by(name: params[:store])

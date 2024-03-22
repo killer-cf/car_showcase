@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       resources :cars, except: %i[create] do
         member do
           patch :activate
+          patch :sell
         end
       end
       resources :brands

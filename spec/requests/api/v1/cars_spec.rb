@@ -177,4 +177,21 @@ RSpec.describe 'api/v1/cars', type: :request do
       end
     end
   end
+
+  path '/api/v1/cars/{id}/sell' do
+    parameter name: 'id', in: :path, type: :string, description: 'id'
+    parameter name: :Authorization, in: :header, type: :string, default: 'Bearer <token>'
+
+    patch('sell car') do
+      tags 'Cars'
+      response(204, 'successful') do
+        let(:brand_id) { Brand.create!(name: 'Ford').id }
+        let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
+        let(:store_id) { create(:store, user:).id }
+        let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+        let(:Authorization) { "Bearer #{jwt}" }
+        run_test!
+      end
+    end
+  end
 end
