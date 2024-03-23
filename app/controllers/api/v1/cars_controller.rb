@@ -9,10 +9,7 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def show
-    @car = Car.find(params[:id])
     render json: @car
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Car with id: #{params[:id]} not found" }, status: :not_found
   end
 
   def create
