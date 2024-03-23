@@ -1,6 +1,6 @@
 class Api::V1::CarsController < ApplicationController
   before_action :authenticate, except: %i[index show]
-  before_action :set_car, only: %i[update destroy activate sell]
+  before_action :set_car, only: %i[show update destroy activate sell]
 
   def index
     @cars = car_filter

@@ -17,6 +17,8 @@ gem 'dotenv-rails'
 
 gem 'pundit'
 
+gem 'pg', '~> 1.1'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 

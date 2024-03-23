@@ -11,6 +11,9 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.1].define(version: 2024_03_21_193411) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "brands", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -23,17 +26,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_21_193411) do
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "brand_id"
-    t.integer "model_id"
-    t.integer "store_id", null: false
+    t.bigint "brand_id"
+    t.bigint "model_id"
+    t.bigint "store_id", null: false
     t.index ["brand_id"], name: "index_cars_on_brand_id"
     t.index ["model_id"], name: "index_cars_on_model_id"
     t.index ["store_id"], name: "index_cars_on_store_id"
   end
 
   create_table "employees", force: :cascade do |t|
-    t.integer "store_id", null: false
-    t.integer "user_id", null: false
+    t.bigint "store_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "role", default: 0
@@ -43,7 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_21_193411) do
 
   create_table "models", force: :cascade do |t|
     t.string "name"
-    t.integer "brand_id", null: false
+    t.bigint "brand_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["brand_id"], name: "index_models_on_brand_id"
@@ -55,7 +58,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_21_193411) do
     t.string "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_stores_on_user_id"
   end
 
