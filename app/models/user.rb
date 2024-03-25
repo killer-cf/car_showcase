@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_one :store, dependent: :destroy
   has_one :employee, dependent: :destroy
+  has_one_attached :avatar
 
   validates :name, :tax_id, presence: true
   validates :tax_id, uniqueness: true
