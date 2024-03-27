@@ -118,20 +118,20 @@ paths:
                 example_key:
                   value:
                     cars:
-                    - id: 1
+                    - id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                       name: Ford Focus
                       year: 2022
                       created_at: '2021-08-10T00:00:00.000Z'
                       updated_at: '2021-08-10T00:00:00.000Z'
-                      brand_id: 1
-                      model_id: 1
-                    - id: 2
+                      brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      model_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                    - id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                       name: Fiat Uno
                       year: 2022
                       created_at: '2021-08-10T00:00:00.000Z'
                       updated_at: '2021-08-10T00:00:00.000Z'
-                      brand_id: 2
-                      model_id: 2
+                      brand_id: jjf9cfdc-b795-45af-9f44-4f017ab105c3
+                      model_id: hhf9cfdc-b795-45af-9f44-4f017ab105c3
   "/api/v1/cars/{id}":
     parameters:
     - name: id
@@ -157,7 +157,7 @@ paths:
               examples:
                 example_key:
                   value:
-                    id: 1
+                    id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                     name: Ford Focus 2018
                     year: 2022
                     brand: Ford
@@ -229,7 +229,7 @@ paths:
           description: invalid request
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -243,28 +243,18 @@ paths:
                   type: integer
                 model_id:
                   type: integer
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
               required:
               - name
               - year
               - status
               - brand_id
               - model_id
-            examples:
-              '201':
-                summary: 201_response
-                value:
-                  name: Ford Focus
-                  year: 2022
-                  status: 0
-                  brand_id: 1
-                  model_id: 1
-              '422':
-                summary: 422_response
-                value:
-                  name: Ford Focus
-                  year: 2022
-                  status: 0
-                  brand_id: 1
+              - images
   "/api/v1/cars/{id}/activate":
     parameters:
     - name: id
@@ -318,14 +308,14 @@ paths:
               examples:
                 example_key:
                   value:
-                  - id: 1
+                  - id: ddf9cfdc-b795-45af-9f44-4f017ab105c3
                     name: Mustang
-                    brand_id: 1
+                    brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                     created_at: '2021-08-10T00:00:00.000Z'
                     updated_at: '2021-08-10T00:00:00.000Z'
-                  - id: 2
+                  - id: tff9cfdc-b795-45af-9f44-4f017ab105c3
                     name: Maverick
-                    brand_id: 1
+                    brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                     created_at: '2021-08-10T00:00:00.000Z'
                     updated_at: '2021-08-10T00:00:00.000Z'
     post:
@@ -345,7 +335,7 @@ paths:
                 name:
                   type: string
                 brand_id:
-                  type: integer
+                  type: string
               required:
               - name
               - brand_id
@@ -354,7 +344,7 @@ paths:
                 summary: 201_response
                 value:
                   name: Mustang
-                  brand_id: 1
+                  brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
   "/api/v1/models/{id}":
     parameters:
     - name: id
@@ -375,9 +365,9 @@ paths:
               examples:
                 example_key:
                   value:
-                    id: 1
+                    id: ddf9cfdc-b795-45af-9f44-4f017ab105c3
                     name: Mustang
-                    brand_id: 1
+                    brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                     created_at: '2021-08-10T00:00:00.000Z'
                     updated_at: '2021-08-10T00:00:00.000Z'
     put:
@@ -389,7 +379,7 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
+          type: string
       responses:
         '204':
           description: successful
@@ -402,7 +392,7 @@ paths:
                 name:
                   type: string
                 brand_id:
-                  type: integer
+                  type: string
               required:
               - name
               - brand_id
@@ -474,7 +464,7 @@ paths:
               examples:
                 example_key:
                   value:
-                    id: 1
+                    id: string-uuid
                     name: Kilder
                     tax_id: 31.576.685/0001-42
     put:

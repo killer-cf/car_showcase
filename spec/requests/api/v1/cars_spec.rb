@@ -51,7 +51,7 @@ RSpec.describe 'api/v1/cars', type: :request do
     get('show car') do
       tags 'Cars'
       response(200, 'successful') do
-        example 'application/json', :example_key, { id: 1,
+        example 'application/json', :example_key, { id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                     name: 'Ford Focus 2018',
                                                     year: 2022,
                                                     brand: 'Ford',
@@ -59,7 +59,7 @@ RSpec.describe 'api/v1/cars', type: :request do
                                                     model: 'Focus' }
         schema type: :object,
                properties: {
-                 id: { type: :integer },
+                 id: { type: :string },
                  name: { type: :string },
                  year: { type: :integer },
                  brand: { type: :string },
@@ -72,7 +72,12 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:store_id) { create(:store, user:).id }
         let(:Authorization) { "Bearer #{jwt}" }
-        let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+        let(:id) do
+          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+          image = fixture_file_upload('car.png', 'image/png')
+          car.images.attach(image) && car.save!
+          car.id
+        end
         run_test!
       end
 
@@ -97,7 +102,12 @@ RSpec.describe 'api/v1/cars', type: :request do
           let(:brand_id) { Brand.create!(name: 'Ford').id }
           let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
           let(:store_id) { create(:store, user:).id }
-          let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+          let(:id) do
+            car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+            image = fixture_file_upload('car.png', 'image/png')
+            car.images.attach(image) && car.save!
+            car.id
+          end
           let(:car) { { name: 'Ford Focus 2022' } }
           let(:Authorization) { "Bearer #{jwt}" }
           run_test!
@@ -110,7 +120,12 @@ RSpec.describe 'api/v1/cars', type: :request do
           let(:brand_id) { Brand.create!(name: 'Ford').id }
           let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
           let(:store_id) { create(:store, user:).id }
-          let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+          let(:id) do
+            car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+            image = fixture_file_upload('car.png', 'image/png')
+            car.images.attach(image) && car.save!
+            car.id
+          end
           let(:Authorization) { "Bearer #{jwt}" }
           run_test!
         end
@@ -121,36 +136,33 @@ RSpec.describe 'api/v1/cars', type: :request do
   path '/api/v1/stores/{store_id}/cars' do
     post('create car') do
       tags 'Cars'
-      consumes 'application/json'
+      consumes 'multipart/form-data'
       parameter name: :store_id, in: :path, type: :string, description: 'store_id'
       parameter name: :Authorization, in: :header, type: :string, default: 'Bearer <token>'
-      parameter name: :car, in: :body, schema: {
+      parameter name: :car, in: :formData, schema: {
         type: :object,
         properties: {
           name: { type: :string },
           year: { type: :integer },
           status: { type: :integer },
           brand_id: { type: :integer },
-          model_id: { type: :integer }
+          model_id: { type: :integer },
+          images: { type: :array, items: { type: :string, format: :binary } }
         },
-        required: %w[name year status brand_id model_id]
+        required: %w[name year status brand_id model_id images]
       }
-      request_body_example value: { name: 'Ford Focus', year: 2022, status: 0, brand_id: 1, model_id: 1 },
-                           name: '201', summary: '201_response'
 
-      request_body_example value: { name: 'Ford Focus', year: 2022, status: 0, brand_id: 1 },
-                           name: '422', summary: '422_response'
-
-      response '201', 'car created' do
+      response '201', 'car created', use_as_request_example: true do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:store_id) { create(:store, user:).id }
         let(:Authorization) { "Bearer #{jwt}" }
-        let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id: } }
+        let(:images) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/car.png'), 'image/png') }
+        let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images: } }
         run_test!
       end
 
-      response '422', 'invalid request' do
+      response '422', 'invalid request', use_as_request_example: true do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus').id }
         let(:store_id) { create(:store, user:).id }
@@ -171,7 +183,12 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:store_id) { create(:store, user:).id }
-        let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+        let(:id) do
+          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+          image = fixture_file_upload('car.png', 'image/png')
+          car.images.attach(image) && car.save!
+          car.id
+        end
         let(:Authorization) { "Bearer #{jwt}" }
         run_test!
       end
@@ -188,7 +205,12 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:store_id) { create(:store, user:).id }
-        let(:id) { Car.create!(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:).id }
+        let(:id) do
+          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+          image = fixture_file_upload('car.png', 'image/png')
+          car.images.attach(image) && car.save!
+          car.id
+        end
         let(:Authorization) { "Bearer #{jwt}" }
         run_test!
       end
