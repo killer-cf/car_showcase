@@ -6,14 +6,14 @@ RSpec.describe 'api/v1/models' do
       tags 'Models'
       produces 'application/json', 'application/xml'
       response(200, 'successful') do
-        example 'application/json', :example_key, [{ id: 1,
+        example 'application/json', :example_key, [{ id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                      name: 'Mustang',
-                                                     brand_id: 1,
+                                                     brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                      created_at: '2021-08-10T00:00:00.000Z',
                                                      updated_at: '2021-08-10T00:00:00.000Z' },
-                                                   { id: 2,
+                                                   { id: 'tff9cfdc-b795-45af-9f44-4f017ab105c3',
                                                      name: 'Maverick',
-                                                     brand_id: 1,
+                                                     brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                      created_at: '2021-08-10T00:00:00.000Z',
                                                      updated_at: '2021-08-10T00:00:00.000Z' }]
 
@@ -28,11 +28,12 @@ RSpec.describe 'api/v1/models' do
         type: :object,
         properties: {
           name: { type: :string },
-          brand_id: { type: :integer }
+          brand_id: { type: :string }
         },
         required: %w[name brand_id]
       }
-      request_body_example value: { name: 'Mustang', brand_id: 1 }, name: '201', summary: '201_response'
+      request_body_example value: { name: 'Mustang', brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3' }, name: '201',
+                           summary: '201_response'
 
       response '201', 'model created' do
         let(:brand_id) { create(:brand).id }
@@ -48,18 +49,18 @@ RSpec.describe 'api/v1/models' do
     get('show model') do
       tags 'Models'
       response(200, 'successful') do
-        example 'application/json', :example_key, { id: 1,
+        example 'application/json', :example_key, { id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                     name: 'Mustang',
-                                                    brand_id: 1,
+                                                    brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                     created_at: '2021-08-10T00:00:00.000Z',
                                                     updated_at: '2021-08-10T00:00:00.000Z' }
         schema type: :object,
-        properties: {
-          id: { type: :integer },
-          name: { type: :string },
-          brand_id: { type: :integer }
-        },
-        required: %w[id name brand_id]
+               properties: {
+                 id: { type: :string },
+                 name: { type: :string },
+                 brand_id: { type: :string }
+               },
+               required: %w[id name brand_id]
 
         let(:brand_id) { create(:brand).id }
         let(:id) { create(:model, brand_id:).id }
@@ -71,12 +72,12 @@ RSpec.describe 'api/v1/models' do
       tags 'Models'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :id, in: :path, type: :integer
+      parameter name: :id, in: :path, type: :string
       parameter name: :model, in: :body, schema: {
         type: :object,
         properties: {
           name: { type: :string },
-          brand_id: { type: :integer }
+          brand_id: { type: :string }
         },
         required: %w[name brand_id]
       }

@@ -17,5 +17,11 @@ RSpec.describe Car do
     it { is_expected.to validate_numericality_of(:year).is_greater_than(1900) }
 
     it { is_expected.to validate_numericality_of(:year).is_less_than(2100) }
+
+    it { is_expected.to validate_attached_of(:images) }
+
+    it { is_expected.to validate_content_type_of(:images).allowing('image/png', 'image/jpeg') }
+
+    it { is_expected.to validate_size_of(:images).less_than(100.megabytes) }
   end
 end

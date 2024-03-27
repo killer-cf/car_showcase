@@ -25,20 +25,20 @@ RSpec.describe 'api/v1/cars', type: :request do
       tags 'Cars'
       produces 'application/json', 'application/xml'
       response(200, 'successful') do
-        example 'application/json', :example_key, { cars: [{ id: 1,
+        example 'application/json', :example_key, { cars: [{ id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                              name: 'Ford Focus',
                                                              year: 2022,
                                                              created_at: '2021-08-10T00:00:00.000Z',
                                                              updated_at: '2021-08-10T00:00:00.000Z',
-                                                             brand_id: 1,
-                                                             model_id: 1 },
-                                                           { id: 2,
+                                                             brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                             model_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3' },
+                                                           { id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                              name: 'Fiat Uno',
                                                              year: 2022,
                                                              created_at: '2021-08-10T00:00:00.000Z',
                                                              updated_at: '2021-08-10T00:00:00.000Z',
-                                                             brand_id: 2,
-                                                             model_id: 2 }] }
+                                                             brand_id: 'jjf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                             model_id: 'hhf9cfdc-b795-45af-9f44-4f017ab105c3' }] }
         run_test!
       end
     end
