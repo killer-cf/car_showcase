@@ -6,6 +6,7 @@ class User < ApplicationRecord
   validates :name, :tax_id, presence: true
   validates :tax_id, uniqueness: true
   validates :name, length: { minimum: 3, maximum: 50 }
+  validates :avatar, content_type: %i[png jpeg], size: { less_than: 100.megabytes }
   validate :valid_cpf_or_cnpj
 
   private
