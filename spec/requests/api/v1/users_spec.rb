@@ -12,12 +12,13 @@ RSpec.describe 'api/v1/users', type: :request do
 
     post 'Creates a user' do
       tags 'Users'
-      consumes 'application/json'
-      parameter name: :user, in: :body, schema: {
+      consumes 'multipart/form-data'
+      parameter name: :user, in: :formData, schema: {
         type: :object,
         properties: {
           name: { type: :string },
-          tax_id: { type: :string }
+          tax_id: { type: :string },
+          avatar: { type: :string, format: :binary }
         },
         required: %w[name tax_id]
       }
@@ -25,7 +26,8 @@ RSpec.describe 'api/v1/users', type: :request do
       request_body_example value: { name: 'Kilder' }, name: '422', summary: '422_response'
 
       response '201', 'user created' do
-        let(:user) { { name: 'foo', tax_id: '31.576.685/0001-42' } }
+        let(:avatar) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/person.jpeg'), 'image/jpeg') }
+        let(:user) { { name: 'foo', tax_id: '31.576.685/0001-42', avatar: } }
         run_test!
       end
 

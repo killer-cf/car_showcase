@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :user do
-    name { 'Kilder' }
+    sequence(:name) { |n| "User #{n}" }
     tax_id { CPF.generate }
     keycloak_id { SecureRandom.uuid }
   end

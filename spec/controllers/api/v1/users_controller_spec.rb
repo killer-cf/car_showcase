@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::UsersController, type: :controller do
+describe Api::V1::UsersController do
   describe 'GET #index' do
     it 'returns a success response' do
       create_list(:user, 5)
@@ -30,10 +30,20 @@ describe Api::V1::UsersController, type: :controller do
 
   describe 'POST #create' do
     context 'with valid params' do
-      it 'creates a new User' do
+      let(:avatar) { fixture_file_upload('person.jpeg', 'image/jpeg') }
+
+      it 'creates a new User without avatar' do
         expect do
           post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42' } }, format: :json
         end.to change(User, :count).by(1)
+      end
+
+      it 'creates a new User with avatar' do
+        expect do
+          post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', avatar: } }, format: :json
+        end.to change(User, :count).by(1)
+        json_response = response.parsed_body
+        expect(json_response['avatar']['url']).to be_present
       end
 
       it 'renders a JSON response with the new user' do

@@ -67,8 +67,12 @@ stores.each do |store|
       status: status,
       brand_id: brand.id,
       model_id: model.id,
-      store_id: store.id
+      store_id: store.id,
     }
-    Car.find_or_create_by!(car)
+    images = Rails.root.join('spec/fixtures/files/car.png').open('rb')
+    Car.find_or_create_by!(car) do |car|
+      car.images.attach(io: images, filename: 'car.png', content_type: 'image/png')
+    end
+    images.close
   end
 end
