@@ -3,8 +3,8 @@ class User < ApplicationRecord
   has_one :employee, dependent: :destroy
   has_one_attached :avatar
 
-  validates :name, :tax_id, presence: true
-  validates :tax_id, uniqueness: true
+  validates :name, :tax_id, :email, presence: true
+  validates :tax_id, :email, uniqueness: true
   validates :name, length: { minimum: 3, maximum: 50 }
   validates :avatar, content_type: %i[png jpeg], size: { less_than: 100.megabytes }
   validate :valid_cpf_or_cnpj

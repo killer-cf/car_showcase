@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/users', type: :request do
+RSpec.describe 'api/v1/users' do
   path '/api/v1/users' do
     get('list users') do
       tags 'Users'
@@ -18,16 +18,15 @@ RSpec.describe 'api/v1/users', type: :request do
         properties: {
           name: { type: :string },
           tax_id: { type: :string },
+          email: { type: :string },
           avatar: { type: :string, format: :binary }
         },
-        required: %w[name tax_id]
+        required: %w[name tax_id email]
       }
-      request_body_example value: { name: 'Kilder', tax_id: '31.576.685/0001-42' }, name: '201', summary: '201_response'
-      request_body_example value: { name: 'Kilder' }, name: '422', summary: '422_response'
 
       response '201', 'user created' do
         let(:avatar) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/person.jpeg'), 'image/jpeg') }
-        let(:user) { { name: 'foo', tax_id: '31.576.685/0001-42', avatar: } }
+        let(:user) { { name: 'foo', tax_id: '31.576.685/0001-42', avatar:, email: 'foo@gmail.com' } }
         run_test!
       end
 
@@ -53,7 +52,7 @@ RSpec.describe 'api/v1/users', type: :request do
                },
                required: %w[id name tax_id]
 
-        let(:id) { User.create(name: 'Joao', tax_id: '31.576.685/0001-42').id }
+        let(:id) { create(:user, name: 'Joao', tax_id: '31.576.685/0001-42').id }
         run_test!
       end
     end
@@ -73,7 +72,7 @@ RSpec.describe 'api/v1/users', type: :request do
       }
 
       response(204, 'successful') do
-        let(:id) { User.create(name: 'Joao', tax_id: '31.576.685/0001-42').id }
+        let(:id) { create(:user, name: 'Joao', tax_id: '31.576.685/0001-42').id }
         let(:user) { { name: 'foo', tax_id: '452.875.860-19' } }
         run_test!
       end
@@ -82,7 +81,7 @@ RSpec.describe 'api/v1/users', type: :request do
     delete('delete user') do
       tags 'Users'
       response(204, 'successful') do
-        let(:id) { User.create(name: 'Joao', tax_id: '31.576.685/0001-42').id }
+        let(:id) { create(:user).id }
         run_test!
       end
     end

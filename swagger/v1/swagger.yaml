@@ -423,7 +423,7 @@ paths:
           description: invalid request
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -431,19 +431,15 @@ paths:
                   type: string
                 tax_id:
                   type: string
+                email:
+                  type: string
+                avatar:
+                  type: string
+                  format: binary
               required:
               - name
               - tax_id
-            examples:
-              '201':
-                summary: 201_response
-                value:
-                  name: Kilder
-                  tax_id: 31.576.685/0001-42
-              '422':
-                summary: 422_response
-                value:
-                  name: Kilder
+              - email
   "/api/v1/users/{id}":
     parameters:
     - name: id

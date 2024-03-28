@@ -1,10 +1,10 @@
 # Users
 users = [
-  { name: 'Kilder Costa', tax_id: '44300248044', keycloak_id: '4212522b-d21b-4848-bee2-38547bcf115e' },
-  { name: 'Leticia Costa', tax_id: '69645714001', keycloak_id: 'key2' },
-  { name: 'Joao Alfredo', tax_id: '56951210004', keycloak_id: 'key3', super: true },
-  { name: 'Filiphe', tax_id: '23358613011', keycloak_id: 'key4' },
-  { name: 'Danilo', tax_id: '99170375003', keycloak_id: 'key5' }
+  { name: 'Kilder Costa', tax_id: '44300248044', keycloak_id: '4212522b-d21b-4848-bee2-38547bcf115e', email: 'costa.kilder@live.com' },
+  { name: 'Leticia Costa', tax_id: '69645714001', keycloak_id: 'key2', email: 'let0980p@gmail.com'},
+  { name: 'Joao Alfredo', tax_id: '56951210004', keycloak_id: 'key3', super: true, email: 'joaoalfredo@carshowcase.com.br' },
+  { name: 'Filiphe', tax_id: '23358613011', keycloak_id: 'key4', email: 'filiphe021@carshowcase.com.br' },
+  { name: 'Danilo', tax_id: '99170375003', keycloak_id: 'key5', email: 'danilo899@carshowcase.com.br' }
 ]
 
 users.each do |user|

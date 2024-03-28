@@ -34,20 +34,24 @@ describe Api::V1::UsersController do
 
       it 'creates a new User without avatar' do
         expect do
-          post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42' } }, format: :json
+          post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', email: 'kilder@gmail.com' } },
+                        format: :json
         end.to change(User, :count).by(1)
       end
 
       it 'creates a new User with avatar' do
         expect do
-          post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', avatar: } }, format: :json
+          post :create,
+               params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', avatar:, email: 'kilder@gmail.com' } },
+               format: :json
         end.to change(User, :count).by(1)
         json_response = response.parsed_body
         expect(json_response['avatar']['url']).to be_present
       end
 
       it 'renders a JSON response with the new user' do
-        post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42' } }, format: :json
+        post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', email: 'kilder@gmail.com' } },
+                      format: :json
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
@@ -73,7 +77,7 @@ describe Api::V1::UsersController do
       end
 
       it 'updates the requested user' do
-        user = User.create(name: 'Joao', tax_id: '31.576.685/0001-42')
+        user = create(:user, name: 'Joao', tax_id: '31.576.685/0001-42')
         put :update, params: { id: user.to_param, user: new_attributes }, format: :json
         user.reload
         expect(user.name).to eq('Kilder')
