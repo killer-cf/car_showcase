@@ -306,5 +306,17 @@ describe Api::V1::CarsController do
       expect(car).not_to be_sold
       expect(response).to have_http_status(:forbidden)
     end
+
+    it 'sends an email when the car is sold' do
+      request.headers['Authorization'] = "Bearer #{jwt}"
+
+      brand = create(:brand)
+      model = create(:model, brand:)
+      car = create(:car, brand:, model:, store: create(:store, user:), status: :active)
+
+      expect do
+        patch :sell, params: { id: car.id, store_id: car.store_id }, format: :json
+      end.to have_enqueued_job.on_queue('default')
+    end
   end
 end

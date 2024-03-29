@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .email-header {
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .email-body {
+      padding: 20px;
+    }
+    .car-details {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-header">
+    <h1>Carro Vendido</h1>
+  </div>
+  <div class="email-body">
+    <p>Prezado proprietário da loja,</p>
+    <p>Estamos satisfeitos em informar que o seguinte carro foi vendido:</p>
+    <div class="car-details">
+      <p>Veiculo: <%= @car.name %></p>
+    </div>
+    <p>Obrigado por fazer negócios conosco.</p>
+  </div>
+</body>
+</html>

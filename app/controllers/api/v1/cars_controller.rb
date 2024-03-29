@@ -39,7 +39,9 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def sell
-    @car.sold!
+    return unless @car.sold!
+
+    CarMailer.with(car: @car).car_sold.deliver_later
   end
 
   private

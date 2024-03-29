@@ -12,3 +12,42 @@ services:
       - PGDATA=/data/postgres
     volumes:
       - ./storage/pg:/data/postgres
+
+  postgresql:
+    image: postgres
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=postgres-keyclock
+      - POSTGRES_PASSWORD=docker-keyclock
+      - POSTGRES_DB=keyclock
+      - PGDATA=/data/postgres
+    volumes:
+      - ./data/pg_keyclock:/data/postgres
+    networks:
+      - keycloak
+
+  keycloak:
+    image: 'bitnami/keycloak:latest'
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_DATABASE_USER=postgres-keyclock
+      - KEYCLOAK_DATABASE_PASSWORD=docker-keyclock
+      - KEYCLOAK_DATABASE_NAME=keyclock
+      - KEYCLOAK_CREATE_ADMIN_USER=true
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - './data/keycloak:/data/keycloak'
+    depends_on:
+      - postgresql
+    networks:
+      - keycloak
+
+networks:
+  keycloak:
+    driver: bridge
