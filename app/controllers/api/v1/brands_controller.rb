@@ -1,4 +1,5 @@
 class Api::V1::BrandsController < ApplicationController
+  before_action :authenticate
   before_action :set_brand, only: %i[show update destroy]
 
   # GET /brands
@@ -15,7 +16,7 @@ class Api::V1::BrandsController < ApplicationController
 
   # POST /brands
   def create
-    @brand = Brand.new(brand_params)
+    @brand = authorize Brand.new(brand_params)
 
     if @brand.save
       render json: @brand, status: :created
@@ -41,7 +42,7 @@ class Api::V1::BrandsController < ApplicationController
   private
 
   def set_brand
-    @brand = Brand.find(params[:id])
+    @brand = authorize Brand.find(params[:id])
   end
 
   def brand_params
