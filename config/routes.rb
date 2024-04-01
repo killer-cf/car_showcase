@@ -23,7 +23,7 @@ Rails.application.routes.draw do
       end
       resources :brands
       resources :models
-      resources :stores do
+      resources :stores, only: %i[index show create update destroy] do
         resources :cars, only: %i[create]
         resources :employees
       end

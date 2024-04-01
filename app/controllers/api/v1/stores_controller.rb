@@ -1,21 +1,19 @@
 class Api::V1::StoresController < ApplicationController
+  before_action :authenticate, except: %i[index show]
   before_action :set_store, only: %i[show update destroy]
 
-  # GET /stores
   def index
     @stores = Store.all
 
     render json: @stores
   end
 
-  # GET /stores/1
   def show
     render json: @store
   end
 
-  # POST /stores
   def create
-    @store = Store.new(store_params)
+    @store = authorize Store.new(store_params)
 
     if @store.save
       render json: @store, status: :created
@@ -24,7 +22,6 @@ class Api::V1::StoresController < ApplicationController
     end
   end
 
-  # PATCH/PUT /stores/1
   def update
     if @store.update(store_params)
       render status: :no_content
@@ -33,7 +30,6 @@ class Api::V1::StoresController < ApplicationController
     end
   end
 
-  # DELETE /stores/1
   def destroy
     @store.destroy!
   end
@@ -41,10 +37,10 @@ class Api::V1::StoresController < ApplicationController
   private
 
   def set_store
-    @store = Store.find(params[:id])
+    @store = authorize Store.find(params[:id])
   end
 
   def store_params
-    params.require(:store).permit(:name, :tax_id, :phone)
+    params.require(:store).permit(:name, :tax_id, :phone, :user_id)
   end
 end
