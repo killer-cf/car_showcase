@@ -4,7 +4,7 @@ class Api::V1::BrandsController < ApplicationController
 
   # GET /brands
   def index
-    @brands = Brand.all
+    @brands = authorize Brand.all
 
     render json: { brands: @brands }
   end

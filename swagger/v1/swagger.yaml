@@ -5,6 +5,12 @@ info:
   version: v1
 paths:
   "/api/v1/brands":
+    parameters:
+    - name: authorization
+      in: header
+      default: Bearer <token>
+      schema:
+        type: string
     get:
       summary: list brands
       tags:
@@ -26,6 +32,10 @@ paths:
                       name: Fiat
                       created_at: '2021-08-10T00:00:00.000Z'
                       updated_at: '2021-08-10T00:00:00.000Z'
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
     post:
       summary: Creates a brand
       tags:
@@ -34,6 +44,10 @@ paths:
       responses:
         '201':
           description: brand created
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
       requestBody:
         content:
           application/json:
@@ -57,6 +71,11 @@ paths:
       required: true
       schema:
         type: string
+    - name: authorization
+      in: header
+      default: Bearer <token>
+      schema:
+        type: string
     get:
       summary: show brand
       tags:
@@ -74,6 +93,10 @@ paths:
                       name: Ford
                       created_at: '2021-08-10T00:00:00.000Z'
                       updated_at: '2021-08-10T00:00:00.000Z'
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
     put:
       summary: update brand
       tags:
@@ -87,6 +110,10 @@ paths:
       responses:
         '204':
           description: successful
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
       requestBody:
         content:
           application/json:
@@ -104,6 +131,10 @@ paths:
       responses:
         '204':
           description: successful
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
   "/api/v1/cars":
     get:
       summary: list cars
