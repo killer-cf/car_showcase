@@ -47,6 +47,14 @@ services:
       - postgresql
     networks:
       - keycloak
+  
+  redis: 
+    container_name: car_showcase_redis
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis:/data
 
 networks:
   keycloak:

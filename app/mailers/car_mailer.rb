@@ -10,4 +10,11 @@ class CarMailer < ApplicationMailer
 
     mail to: 'costa.kilder@live.com', subject: 'Car sold'
   end
+
+  def car_resume
+    @store_id = params[:store_id]
+    @count = Car.where(store_id: @store_id).sold.count
+
+    mail to: 'costa.kilder@live.com', subject: 'Car resume'
+  end
 end

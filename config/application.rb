@@ -16,8 +16,6 @@ module CarShowcase
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-    config.active_storage.variant_processor = :mini_magick
-
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -31,6 +29,18 @@ module CarShowcase
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # This also configures session_options for use below
+    config.session_store :cookie_store, key: '_interslice_session'
+
+    # Required for all session management (regardless of session_store)
+    config.middleware.use ActionDispatch::Cookies
+
+    config.middleware.use config.session_store, config.session_options
+
     config.generators { |g| g.orm :active_record, primary_key_type: :uuid }
+
+    config.active_storage.variant_processor = :mini_magick
+
+    config.active_job.queue_adapter = :sidekiq
   end
 end
