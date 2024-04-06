@@ -21,15 +21,7 @@ RSpec.configure do |config|
         title: 'API V1',
         version: 'v1'
       },
-      paths: {},
-      servers: [
-        {
-          url: Rails.application.credentials.api_url
-        },
-        {
-          url: 'http://localhost:3000'
-        }
-      ]
+      paths: {}
     }
   }
 

@@ -502,6 +502,3 @@ paths:
       responses:
         '204':
           description: successful
-servers:
-- url: https://apicarshowcase.kilder-cf.com
-- url: http://localhost:3000
