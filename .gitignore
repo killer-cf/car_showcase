@@ -29,6 +29,7 @@
 !/tmp/storage/
 !/tmp/storage/.keep
 data
+.DS_Store
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
