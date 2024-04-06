@@ -1,0 +1,67 @@
+name: "Ruby on Rails CI"
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup System
+        run: sudo apt-get install -y libsqlite3-dev
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@8f312efe1262fb463d906e9bf040319394c18d3e # v1.92
+        with:
+          bundler-cache: true
+      - name: Set up database schema
+        run: bin/rails db:prepare
+      - name: Run tests
+        run: bundle exec rspec
+
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup System
+        run: sudo apt-get install -y libsqlite3-dev
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@8f312efe1262fb463d906e9bf040319394c18d3e # v1.92
+        with:
+          bundler-cache: true
+      - name: Security audit dependencies
+        run: bundle exec bundle-audit --update
+  
+  build-and-push:
+    name: 'Build and Push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate sha
+        id: generate_sha
+        run: |
+          SHA=$(echo $GITHUB_SHA | head -c7)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+      
+      - name: Build docker image
+        run: docker build -t killercf/car_showcase.api:${{ steps.generate_sha.outputs.sha }} .
+
+      - name: Log into container register
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }} 
+
+      - name: Push image to container register
+        run: |
+          docker push killercf/car_showcase.api:${{ steps.generate_sha.outputs.sha }}
+          docker tag killercf/car_showcase.api:${{ steps.generate_sha.outputs.sha }} killercf/car_showcase.api:latest
+          docker push killercf/car_showcase.api:latest
