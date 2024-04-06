@@ -11,7 +11,7 @@ services:
       - POSTGRES_DB=car_showcase
       - PGDATA=/data/postgres
     volumes:
-      - ./storage/pg:/data/postgres
+      - ./data/pg:/data/postgres
 
   postgresql:
     image: postgres

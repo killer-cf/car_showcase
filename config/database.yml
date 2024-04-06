@@ -10,8 +10,8 @@ development:
 
 test:
   <<: *default
-  adapter: sqlite3
-  database: db/test.sqlite3
+  adapter: postgresql
+  encoding: unicode
   url: <%= Rails.application.credentials.dig(:test, :database_url) %>
 
 production:
