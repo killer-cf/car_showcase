@@ -353,10 +353,19 @@ paths:
       summary: Creates a model
       tags:
       - Models
-      parameters: []
+      parameters:
+      - name: authorization
+        in: header
+        default: Bearer <token>
+        schema:
+          type: string
       responses:
         '201':
           description: model created
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
       requestBody:
         content:
           application/json:
@@ -384,49 +393,11 @@ paths:
       required: true
       schema:
         type: string
-    get:
-      summary: show model
-      tags:
-      - Models
-      responses:
-        '200':
-          description: successful
-          content:
-            application/json:
-              examples:
-                example_key:
-                  value:
-                    id: ddf9cfdc-b795-45af-9f44-4f017ab105c3
-                    name: Mustang
-                    brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
-                    created_at: '2021-08-10T00:00:00.000Z'
-                    updated_at: '2021-08-10T00:00:00.000Z'
-    put:
-      summary: update model
-      tags:
-      - Models
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: successful
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                brand_id:
-                  type: string
-              required:
-              - name
-              - brand_id
+    - name: authorization
+      in: header
+      default: Bearer <token>
+      schema:
+        type: string
     delete:
       summary: delete model
       tags:
@@ -434,6 +405,10 @@ paths:
       responses:
         '204':
           description: successful
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
   "/api/v1/users":
     get:
       summary: list users
@@ -528,7 +503,5 @@ paths:
         '204':
           description: successful
 servers:
-- url: http://{defaultHost}
-  variables:
-    defaultHost:
-      default: localhost:3000
+- url: https://apicarshowcase.kilder-cf.com
+- url: http://localhost:3000
