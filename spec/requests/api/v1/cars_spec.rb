@@ -27,18 +27,24 @@ RSpec.describe 'api/v1/cars', type: :request do
       response(200, 'successful') do
         example 'application/json', :example_key, { cars: [{ id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                              name: 'Ford Focus',
-                                                             year: 2022,
+                                                             year: 2018,
+                                                             km: 23.500,
+                                                             price: 60_000.00,
+                                                             used: true,
                                                              created_at: '2021-08-10T00:00:00.000Z',
                                                              updated_at: '2021-08-10T00:00:00.000Z',
-                                                             brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                             model_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3' },
+                                                             brand: 'Ford',
+                                                             model: 'Focus' },
                                                            { id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                              name: 'Fiat Uno',
-                                                             year: 2022,
+                                                             year: 2012,
+                                                             km: 200.500,
+                                                             price: 10_000.00,
+                                                             used: true,
                                                              created_at: '2021-08-10T00:00:00.000Z',
                                                              updated_at: '2021-08-10T00:00:00.000Z',
-                                                             brand_id: 'jjf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                             model_id: 'hhf9cfdc-b795-45af-9f44-4f017ab105c3' }] }
+                                                             brand: 'Fiat',
+                                                             model: 'Uno' }] }
         run_test!
       end
     end
@@ -64,16 +70,20 @@ RSpec.describe 'api/v1/cars', type: :request do
                  year: { type: :integer },
                  brand: { type: :string },
                  model: { type: :string },
+                 price: { type: :decimal },
+                 km: { type: :decimal },
+                 used: { type: :boolean },
                  created_at: { type: :string }
                },
-               required: %w[id name year brand model created_at]
+               required: %w[id name year brand model created_at price km used]
 
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:store_id) { create(:store, user:).id }
         let(:Authorization) { "Bearer #{jwt}" }
         let(:id) do
-          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:, price: 100_000.00,
+                        km: 23.555, used: true)
           image = fixture_file_upload('car.png', 'image/png')
           car.images.attach(image) && car.save!
           car.id
@@ -92,10 +102,13 @@ RSpec.describe 'api/v1/cars', type: :request do
             name: { type: :string },
             year: { type: :integer },
             status: { type: :integer },
+            price: { type: :decimal },
+            km: { type: :decimal },
+            used: { type: :boolean },
             brand_id: { type: :integer },
             model_id: { type: :integer }
           },
-          required: %w[name year status brand_id model_id]
+          required: %w[name year status brand_id model_id price km used]
         }
 
         response(204, 'successful') do
@@ -103,7 +116,8 @@ RSpec.describe 'api/v1/cars', type: :request do
           let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
           let(:store_id) { create(:store, user:).id }
           let(:id) do
-            car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+            car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:,
+                          price: 100_000.00, km: 23.555, used: true)
             image = fixture_file_upload('car.png', 'image/png')
             car.images.attach(image) && car.save!
             car.id
@@ -121,7 +135,8 @@ RSpec.describe 'api/v1/cars', type: :request do
           let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
           let(:store_id) { create(:store, user:).id }
           let(:id) do
-            car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+            car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:,
+                          price: 100_000.00, km: 23.555, used: true)
             image = fixture_file_upload('car.png', 'image/png')
             car.images.attach(image) && car.save!
             car.id
@@ -145,11 +160,14 @@ RSpec.describe 'api/v1/cars', type: :request do
           name: { type: :string },
           year: { type: :integer },
           status: { type: :integer },
+          price: { type: :decimal },
+          km: { type: :decimal },
+          used: { type: :boolean },
           brand_id: { type: :integer },
           model_id: { type: :integer },
           images: { type: :array, items: { type: :string, format: :binary } }
         },
-        required: %w[name year status brand_id model_id images]
+        required: %w[name year status brand_id model_id images price km used]
       }
 
       response '201', 'car created', use_as_request_example: true do
@@ -158,7 +176,10 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:store_id) { create(:store, user:).id }
         let(:Authorization) { "Bearer #{jwt}" }
         let(:images) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/car.png'), 'image/png') }
-        let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images: } }
+        let(:car) do
+          { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images:, price: 100_000.00, km: 23.555,
+            used: true }
+        end
         run_test!
       end
 
@@ -184,7 +205,8 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:store_id) { create(:store, user:).id }
         let(:id) do
-          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:,
+                        price: 100_000.00, km: 23.555, used: true)
           image = fixture_file_upload('car.png', 'image/png')
           car.images.attach(image) && car.save!
           car.id
@@ -206,7 +228,8 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
         let(:store_id) { create(:store, user:).id }
         let(:id) do
-          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:)
+          car = Car.new(name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, store_id:,
+                        price: 100_000.00, km: 23.555, used: true)
           image = fixture_file_upload('car.png', 'image/png')
           car.images.attach(image) && car.save!
           car.id

@@ -111,7 +111,8 @@ describe Api::V1::CarsController do
         request.headers['Authorization'] = "Bearer #{jwt}"
 
         expect do
-          post :create, params: { car: { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images: }, store_id: },
+          post :create, params: { car: { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images:,
+                                         price: 100_000.00, km: 23_500.00, used: true }, store_id: },
                         format: :json
         end.to change(Car, :count).by(1)
 

@@ -8,6 +8,12 @@ RSpec.describe Car do
 
     it { is_expected.to validate_presence_of(:status) }
 
+    it { is_expected.to validate_presence_of(:price) }
+
+    it { is_expected.to validate_presence_of(:km) }
+
+    it { is_expected.to validate_presence_of(:used) }
+
     it { is_expected.to belong_to(:brand).required(true) }
 
     it { is_expected.to belong_to(:model).required(true) }
@@ -17,6 +23,10 @@ RSpec.describe Car do
     it { is_expected.to validate_numericality_of(:year).is_greater_than(1900) }
 
     it { is_expected.to validate_numericality_of(:year).is_less_than(2100) }
+
+    it { is_expected.to validate_numericality_of(:km).is_greater_than_or_equal_to(0.0) }
+
+    it { is_expected.to validate_numericality_of(:price).is_greater_than_or_equal_to(0.0) }
 
     it { is_expected.to validate_attached_of(:images) }
 
