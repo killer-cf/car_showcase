@@ -151,18 +151,24 @@ paths:
                     cars:
                     - id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                       name: Ford Focus
-                      year: 2022
+                      year: 2018
+                      km: 23.5
+                      price: 60000.0
+                      used: true
                       created_at: '2021-08-10T00:00:00.000Z'
                       updated_at: '2021-08-10T00:00:00.000Z'
-                      brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
-                      model_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      brand: Ford
+                      model: Focus
                     - id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
                       name: Fiat Uno
-                      year: 2022
+                      year: 2012
+                      km: 200.5
+                      price: 10000.0
+                      used: true
                       created_at: '2021-08-10T00:00:00.000Z'
                       updated_at: '2021-08-10T00:00:00.000Z'
-                      brand_id: jjf9cfdc-b795-45af-9f44-4f017ab105c3
-                      model_id: hhf9cfdc-b795-45af-9f44-4f017ab105c3
+                      brand: Fiat
+                      model: Uno
   "/api/v1/cars/{id}":
     parameters:
     - name: id
@@ -219,6 +225,12 @@ paths:
                   type: integer
                 status:
                   type: integer
+                price:
+                  type: decimal
+                km:
+                  type: decimal
+                used:
+                  type: boolean
                 brand_id:
                   type: integer
                 model_id:
@@ -229,6 +241,9 @@ paths:
               - status
               - brand_id
               - model_id
+              - price
+              - km
+              - used
     delete:
       summary: delete car
       tags:
@@ -270,6 +285,12 @@ paths:
                   type: integer
                 status:
                   type: integer
+                price:
+                  type: decimal
+                km:
+                  type: decimal
+                used:
+                  type: boolean
                 brand_id:
                   type: integer
                 model_id:
@@ -286,6 +307,9 @@ paths:
               - brand_id
               - model_id
               - images
+              - price
+              - km
+              - used
   "/api/v1/cars/{id}/activate":
     parameters:
     - name: id
@@ -402,6 +426,142 @@ paths:
       summary: delete model
       tags:
       - Models
+      responses:
+        '204':
+          description: successful
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
+  "/api/v1/stores":
+    get:
+      summary: list stores
+      tags:
+      - Stores
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                example_key:
+                  value:
+                    stores:
+                    - id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      name: Ford Store
+                      phone: '81981316877'
+                      tax_id: '68005188000102'
+                      created_at: '2021-08-10T00:00:00.000Z'
+                    - id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      name: Fiat Store
+                      phone: '81981316877'
+                      tax_id: '68005188000102'
+                      created_at: '2021-08-10T00:00:00.000Z'
+    post:
+      summary: create store
+      tags:
+      - Stores
+      parameters:
+      - name: authorization
+        in: header
+        default: Bearer <token>
+        schema:
+          type: string
+      responses:
+        '201':
+          description: store created
+        '422':
+          description: invalid request
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+                tax_id:
+                  type: string
+                user_id:
+                  type: string
+              required:
+              - name
+              - phone
+              - tax_id
+              - user_id
+  "/api/v1/stores/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    - name: authorization
+      in: header
+      default: Bearer <token>
+      schema:
+        type: string
+    get:
+      summary: show store
+      tags:
+      - Stores
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                example_key:
+                  value:
+                    id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                    name: Fiat Store
+                    phone: '81981316877'
+                    tax_id: '68005188000102'
+                    created_at: '2021-08-10T00:00:00.000Z'
+    put:
+      summary: update store
+      tags:
+      - Stores
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: successful
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+                tax_id:
+                  type: string
+              required:
+              - name
+              - phone
+              - tax_id
+    delete:
+      summary: delete store
+      tags:
+      - Stores
       responses:
         '204':
           description: successful
