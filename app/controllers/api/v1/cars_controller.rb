@@ -54,7 +54,7 @@ class Api::V1::CarsController < ApplicationController
 
   def car_params
     params[:car][:status] = params[:car][:status].to_i
-    params.require(:car).permit(:name, :year, :status, :brand_id, :model_id, :images)
+    params.require(:car).permit(:name, :year, :status, :brand_id, :model_id, :images, :price, :km, :used)
   end
 
   def car_filter

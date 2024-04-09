@@ -1,5 +1,5 @@
 class CarSerializer < ApplicationSerializer
-  attributes :id, :name, :year, :brand, :model, :created_at
+  attributes :id, :name, :year, :brand, :model, :price, :km, :used, :created_at
 
   belongs_to :brand
   belongs_to :model

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_28_145942) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_08_205859) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -57,6 +57,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_28_145942) do
     t.uuid "brand_id", null: false
     t.uuid "model_id", null: false
     t.uuid "store_id", null: false
+    t.decimal "price"
+    t.decimal "km"
+    t.boolean "used"
     t.index ["brand_id"], name: "index_cars_on_brand_id"
     t.index ["model_id"], name: "index_cars_on_model_id"
     t.index ["store_id"], name: "index_cars_on_store_id"
