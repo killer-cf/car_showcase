@@ -15,6 +15,8 @@ class CarSerializer < ApplicationSerializer
 
   def images
     object.images.map do |image|
+      next if image.blank?
+
       image_url = Rails.application.routes.url_helpers.rails_blob_url(image, only_path: true)
 
       {
