@@ -48,6 +48,50 @@ RSpec.describe 'api/v1/cars', type: :request do
         run_test!
       end
     end
+
+    post('create car') do
+      tags 'Cars'
+      consumes 'multipart/form-data'
+      parameter name: :store_id, in: :path, type: :string, description: 'store_id'
+      parameter name: :Authorization, in: :header, type: :string, default: 'Bearer <token>'
+      parameter name: :car, in: :formData, schema: {
+        type: :object,
+        properties: {
+          name: { type: :string },
+          year: { type: :integer },
+          status: { type: :integer },
+          price: { type: :decimal },
+          km: { type: :decimal },
+          used: { type: :boolean },
+          brand_id: { type: :integer },
+          model_id: { type: :integer },
+          images: { type: :array, items: { type: :string, format: :binary } }
+        },
+        required: %w[name year status brand_id model_id images price km used]
+      }
+
+      response '201', 'car created', use_as_request_example: true do
+        let(:brand_id) { Brand.create!(name: 'Ford').id }
+        let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
+        let(:store_id) { create(:store, user:).id }
+        let(:Authorization) { "Bearer #{jwt}" }
+        let(:images) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/car.png'), 'image/png') }
+        let(:car) do
+          { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images:, price: 100_000.00, km: 23.555,
+            used: true }
+        end
+        run_test!
+      end
+
+      response '422', 'invalid request', use_as_request_example: true do
+        let(:brand_id) { Brand.create!(name: 'Ford').id }
+        let(:model_id) { Model.create!(name: 'Focus').id }
+        let(:store_id) { create(:store, user:).id }
+        let(:Authorization) { "Bearer #{jwt}" }
+        let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id: } }
+        run_test!
+      end
+    end
   end
 
   path '/api/v1/cars/{id}' do
@@ -144,52 +188,6 @@ RSpec.describe 'api/v1/cars', type: :request do
           let(:Authorization) { "Bearer #{jwt}" }
           run_test!
         end
-      end
-    end
-  end
-
-  path '/api/v1/stores/{store_id}/cars' do
-    post('create car') do
-      tags 'Cars'
-      consumes 'multipart/form-data'
-      parameter name: :store_id, in: :path, type: :string, description: 'store_id'
-      parameter name: :Authorization, in: :header, type: :string, default: 'Bearer <token>'
-      parameter name: :car, in: :formData, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          year: { type: :integer },
-          status: { type: :integer },
-          price: { type: :decimal },
-          km: { type: :decimal },
-          used: { type: :boolean },
-          brand_id: { type: :integer },
-          model_id: { type: :integer },
-          images: { type: :array, items: { type: :string, format: :binary } }
-        },
-        required: %w[name year status brand_id model_id images price km used]
-      }
-
-      response '201', 'car created', use_as_request_example: true do
-        let(:brand_id) { Brand.create!(name: 'Ford').id }
-        let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
-        let(:store_id) { create(:store, user:).id }
-        let(:Authorization) { "Bearer #{jwt}" }
-        let(:images) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/car.png'), 'image/png') }
-        let(:car) do
-          { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images:, price: 100_000.00, km: 23.555,
-            used: true }
-        end
-        run_test!
-      end
-
-      response '422', 'invalid request', use_as_request_example: true do
-        let(:brand_id) { Brand.create!(name: 'Ford').id }
-        let(:model_id) { Model.create!(name: 'Focus').id }
-        let(:store_id) { create(:store, user:).id }
-        let(:Authorization) { "Bearer #{jwt}" }
-        let(:car) { { name: 'Ford Focus', year: 2022, status: 0, brand_id: } }
-        run_test!
       end
     end
   end

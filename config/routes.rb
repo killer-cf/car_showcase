@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users
-      resources :cars, except: %i[create] do
+      resources :cars do
         member do
           patch :activate
           patch :sell
@@ -24,7 +24,6 @@ Rails.application.routes.draw do
       resources :brands
       resources :models
       resources :stores, only: %i[index show create update destroy] do
-        resources :cars, only: %i[create]
         resources :employees
       end
     end

@@ -1,6 +1,7 @@
 class Api::V1::CarsController < ApplicationController
   before_action :authenticate, except: %i[index show]
   before_action :set_car, only: %i[show update destroy activate sell]
+  before_action :set_store_id, only: %i[create]
 
   def index
     @cars = car_filter
@@ -13,7 +14,7 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def create
-    @car = authorize Car.new(car_params.merge(store_id: params[:store_id]))
+    @car = Car.new(car_params.merge(store_id: @store_id))
 
     if @car.save
       render json: @car, status: :created
@@ -55,6 +56,14 @@ class Api::V1::CarsController < ApplicationController
   def car_params
     params[:car][:status] = params[:car][:status].to_i
     params.require(:car).permit(:name, :year, :status, :brand_id, :model_id, :images, :price, :km, :used)
+  end
+
+  def set_store_id
+    @store_id = current_user.store&.id || current_user.employee&.store_id || nil
+
+    return if @store_id
+
+    render json: { error: 'User is not an owner or employee' }, status: :bad_request
   end
 
   def car_filter

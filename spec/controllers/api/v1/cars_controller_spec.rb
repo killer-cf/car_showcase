@@ -103,16 +103,16 @@ describe Api::V1::CarsController do
   describe 'POST #create' do
     context 'with valid params' do
       let(:brand_id) { create(:brand).id }
-      let(:model_id) { create(:model, brand_id:).id }
-      let(:store_id) { create(:store, user:).id }
       let(:images) { fixture_file_upload('car.png', 'image/png') }
+      let(:model_id) { create(:model, brand_id:).id }
 
       it 'creates a new Car and return it as json' do
+        create(:store, user:)
         request.headers['Authorization'] = "Bearer #{jwt}"
 
         expect do
           post :create, params: { car: { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images:,
-                                         price: 100_000.00, km: 23_500.00, used: true }, store_id: },
+                                         price: 100_000.00, km: 23_500.00, used: true } },
                         format: :json
         end.to change(Car, :count).by(1)
 
@@ -125,30 +125,28 @@ describe Api::V1::CarsController do
     end
 
     context 'with invalid params' do
-      let(:store_id) { create(:store, user:).id }
-
       it 'renders a JSON response with errors for the new car' do
+        create(:store, user:)
         request.headers['Authorization'] = "Bearer #{jwt}"
 
-        post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
+        post :create, params: { car: { name: 'Ford Focus' } }, format: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
 
     context 'without authentication' do
-      let(:store_id) { create(:store).id }
-
       it 'unauthenticated' do
-        post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
+        create(:store, user:)
+        post :create, params: { car: { name: 'Ford Focus' } }, format: :json
         expect(response).to have_http_status(:unauthorized)
       end
 
-      it 'unauthorized' do
+      it 'unauthorized (no store)' do
         request.headers['Authorization'] = "Bearer #{jwt}"
 
-        post :create, params: { car: { name: 'Ford Focus' }, store_id: }, format: :json
-        expect(response).to have_http_status(:forbidden)
+        post :create, params: { car: { name: 'Ford Focus' } }, format: :json
+        expect(response).to have_http_status(:bad_request)
       end
     end
   end

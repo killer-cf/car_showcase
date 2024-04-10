@@ -169,6 +169,64 @@ paths:
                       updated_at: '2021-08-10T00:00:00.000Z'
                       brand: Fiat
                       model: Uno
+    post:
+      summary: create car
+      tags:
+      - Cars
+      parameters:
+      - name: store_id
+        in: path
+        description: store_id
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        default: Bearer <token>
+        schema:
+          type: string
+      responses:
+        '201':
+          description: car created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                year:
+                  type: integer
+                status:
+                  type: integer
+                price:
+                  type: decimal
+                km:
+                  type: decimal
+                used:
+                  type: boolean
+                brand_id:
+                  type: integer
+                model_id:
+                  type: integer
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required:
+              - name
+              - year
+              - status
+              - brand_id
+              - model_id
+              - images
+              - price
+              - km
+              - used
   "/api/v1/cars/{id}":
     parameters:
     - name: id
@@ -251,65 +309,6 @@ paths:
       responses:
         '204':
           description: successful
-  "/api/v1/stores/{store_id}/cars":
-    post:
-      summary: create car
-      tags:
-      - Cars
-      parameters:
-      - name: store_id
-        in: path
-        description: store_id
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        default: Bearer <token>
-        schema:
-          type: string
-      responses:
-        '201':
-          description: car created
-        '422':
-          description: invalid request
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                year:
-                  type: integer
-                status:
-                  type: integer
-                price:
-                  type: decimal
-                km:
-                  type: decimal
-                used:
-                  type: boolean
-                brand_id:
-                  type: integer
-                model_id:
-                  type: integer
-                images:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-              required:
-              - name
-              - year
-              - status
-              - brand_id
-              - model_id
-              - images
-              - price
-              - km
-              - used
   "/api/v1/cars/{id}/activate":
     parameters:
     - name: id
