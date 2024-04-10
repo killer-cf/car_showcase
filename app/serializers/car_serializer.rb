@@ -15,13 +15,11 @@ class CarSerializer < ApplicationSerializer
 
   def images
     object.images.map do |image|
-      next unless image
-
       image_url = Rails.application.routes.url_helpers.rails_blob_url(image, only_path: true)
 
       {
         id: image.id,
-        url: Rails.application.credentials.api_url + image_url
+        url: ENV.fetch('APP_URL') + image_url
       }
     end
   end
