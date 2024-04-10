@@ -32,7 +32,7 @@ describe Api::V1::BrandsController do
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
       json_response = response.parsed_body
-      expect(json_response['brands'].count).to eq(5)
+      expect(json_response.count).to eq(5)
     end
   end
 
@@ -194,6 +194,22 @@ describe Api::V1::BrandsController do
 
         expect(response).to have_http_status(:forbidden)
       end
+    end
+  end
+
+  describe 'GET #index_models' do
+    let(:user) { create(:user) }
+
+    it 'returns a success response' do
+      brand = create(:brand)
+      create_list(:model, 5, brand:)
+
+      get :index_models, params: { id: brand.to_param }, format: :json
+
+      expect(response).to be_successful
+      expect(response.content_type).to eq('application/json; charset=utf-8')
+      json_response = response.parsed_body
+      expect(json_response.count).to eq(5)
     end
   end
 end

@@ -5,12 +5,6 @@ info:
   version: v1
 paths:
   "/api/v1/brands":
-    parameters:
-    - name: authorization
-      in: header
-      default: Bearer <token>
-      schema:
-        type: string
     get:
       summary: list brands
       tags:
@@ -32,15 +26,16 @@ paths:
                       name: Fiat
                       created_at: '2021-08-10T00:00:00.000Z'
                       updated_at: '2021-08-10T00:00:00.000Z'
-        '401':
-          description: unauthorized
-        '403':
-          description: forbidden
     post:
       summary: Creates a brand
+      parameters:
+      - name: authorization
+        in: header
+        default: Bearer <token>
+        schema:
+          type: string
       tags:
       - Brands
-      parameters: []
       responses:
         '201':
           description: brand created
@@ -135,6 +130,37 @@ paths:
           description: unauthorized
         '403':
           description: forbidden
+  "/api/v1/brands/{id}/index_models":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: list models
+      tags:
+      - Brands
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                example_key:
+                  value:
+                    models:
+                    - id: uuid
+                      name: Fiesta
+                      brand_id: uuid
+                      created_at: '2021-08-10T00:00:00.000Z'
+                      updated_at: '2021-08-10T00:00:00.000Z'
+                    - id: uuid
+                      name: Focus
+                      brand_id: uuid
+                      created_at: '2021-08-10T00:00:00.000Z'
+                      updated_at: '2021-08-10T00:00:00.000Z'
   "/api/v1/cars":
     get:
       summary: list cars

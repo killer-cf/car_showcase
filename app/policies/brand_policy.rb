@@ -4,7 +4,7 @@ class BrandPolicy < ApplicationPolicy
   end
 
   def index?
-    user_is_super?
+    true
   end
 
   def create?

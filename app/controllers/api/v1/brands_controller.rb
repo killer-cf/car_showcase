@@ -1,20 +1,17 @@
 class Api::V1::BrandsController < ApplicationController
-  before_action :authenticate
+  before_action :authenticate, except: %i[index index_models]
   before_action :set_brand, only: %i[show update destroy]
 
-  # GET /brands
   def index
-    @brands = authorize Brand.all
+    @brands = Brand.all
 
-    render json: { brands: @brands }
+    render json: @brands
   end
 
-  # GET /brands/1
   def show
     render json: @brand
   end
 
-  # POST /brands
   def create
     @brand = authorize Brand.new(brand_params)
 
@@ -25,7 +22,6 @@ class Api::V1::BrandsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /brands/1
   def update
     if @brand.update(brand_params)
       render status: :no_content
@@ -34,9 +30,14 @@ class Api::V1::BrandsController < ApplicationController
     end
   end
 
-  # DELETE /brands/1
   def destroy
     @brand.destroy!
+  end
+
+  def index_models
+    @models = Brand.find(params[:id]).models
+
+    render json: @models
   end
 
   private

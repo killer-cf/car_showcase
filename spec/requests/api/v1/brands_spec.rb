@@ -21,13 +21,10 @@ RSpec.describe 'api/v1/brands' do
   end
 
   path '/api/v1/brands' do
-    parameter name: :authorization, in: :header, type: :string, default: 'Bearer <token>'
-
     get('list brands') do
       tags 'Brands'
       produces 'application/json', 'application/xml'
       response(200, 'successful') do
-        let(:authorization) { "Bearer #{jwt}" }
         example 'application/json', :example_key, { brands: [{ id: 1,
                                                                name: 'Ford',
                                                                created_at: '2021-08-10T00:00:00.000Z',
@@ -39,20 +36,10 @@ RSpec.describe 'api/v1/brands' do
 
         run_test!
       end
-
-      response(401, 'unauthorized') do
-        let(:authorization) { nil }
-        run_test!
-      end
-
-      response(403, 'forbidden') do
-        let(:user) { create(:user) }
-        let(:authorization) { "Bearer #{jwt}" }
-        run_test!
-      end
     end
 
     post 'Creates a brand' do
+      parameter name: :authorization, in: :header, type: :string, default: 'Bearer <token>'
       tags 'Brands'
       consumes 'application/json'
       parameter name: :brand, in: :body, schema: {
@@ -180,6 +167,28 @@ RSpec.describe 'api/v1/brands' do
         let(:user) { create(:user) }
         let(:id) { Brand.create(name: 'Pegeout').id }
         let(:authorization) { "Bearer #{jwt}" }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/brands/{id}/index_models' do
+    parameter name: 'id', in: :path, type: :string, description: 'id'
+
+    get('list models') do
+      tags 'Brands'
+      response(200, 'successful') do
+        let(:id) { Brand.create(name: 'Pegeout').id }
+        example 'application/json', :example_key, { models: [{ id: 'uuid',
+                                                               name: 'Fiesta',
+                                                               brand_id: 'uuid',
+                                                               created_at: '2021-08-10T00:00:00.000Z',
+                                                               updated_at: '2021-08-10T00:00:00.000Z' },
+                                                             { id: 'uuid',
+                                                               name: 'Focus',
+                                                               brand_id: 'uuid',
+                                                               created_at: '2021-08-10T00:00:00.000Z',
+                                                               updated_at: '2021-08-10T00:00:00.000Z' }] }
         run_test!
       end
     end

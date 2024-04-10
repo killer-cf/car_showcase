@@ -21,7 +21,9 @@ Rails.application.routes.draw do
           patch :sell
         end
       end
-      resources :brands
+      resources :brands do
+        get :index_models, on: :member
+      end
       resources :models
       resources :stores, only: %i[index show create update destroy] do
         resources :employees
