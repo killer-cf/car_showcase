@@ -172,7 +172,7 @@ RSpec.describe 'api/v1/brands' do
     end
   end
 
-  path '/api/v1/brands/{id}/index_models' do
+  path '/api/v1/brands/{id}/models' do
     parameter name: 'id', in: :path, type: :string, description: 'id'
 
     get('list models') do

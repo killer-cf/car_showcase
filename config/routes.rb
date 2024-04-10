@@ -22,7 +22,7 @@ Rails.application.routes.draw do
         end
       end
       resources :brands do
-        get :index_models, on: :member
+        get :models, on: :member, to: 'brands#index_models'
       end
       resources :models
       resources :stores, only: %i[index show create update destroy] do

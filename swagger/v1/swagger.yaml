@@ -130,7 +130,7 @@ paths:
           description: unauthorized
         '403':
           description: forbidden
-  "/api/v1/brands/{id}/index_models":
+  "/api/v1/brands/{id}/models":
     parameters:
     - name: id
       in: path
