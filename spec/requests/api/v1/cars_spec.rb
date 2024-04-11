@@ -59,7 +59,6 @@ RSpec.describe 'api/v1/cars', type: :request do
         properties: {
           name: { type: :string },
           year: { type: :integer },
-          status: { type: :integer },
           price: { type: :decimal },
           km: { type: :decimal },
           used: { type: :boolean },
@@ -67,7 +66,7 @@ RSpec.describe 'api/v1/cars', type: :request do
           model_id: { type: :integer },
           images: { type: :array, items: { type: :string, format: :binary } }
         },
-        required: %w[name year status brand_id model_id images price km used]
+        required: %w[name year brand_id model_id images price km used]
       }
 
       response '201', 'car created', use_as_request_example: true do
@@ -77,7 +76,7 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:Authorization) { "Bearer #{jwt}" }
         let(:images) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/car.png'), 'image/png') }
         let(:car) do
-          { name: 'Ford Focus', year: 2022, status: 0, brand_id:, model_id:, images:, price: 100_000.00, km: 23.555,
+          { name: 'Ford Focus', year: 2022, brand_id:, model_id:, images:, price: 100_000.00, km: 23.555,
             used: true }
         end
         run_test!

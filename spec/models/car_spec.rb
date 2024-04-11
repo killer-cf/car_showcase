@@ -6,8 +6,6 @@ RSpec.describe Car do
 
     it { is_expected.to validate_presence_of(:year) }
 
-    it { is_expected.to validate_presence_of(:status) }
-
     it { is_expected.to validate_presence_of(:price) }
 
     it { is_expected.to validate_presence_of(:km) }
