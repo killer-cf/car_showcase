@@ -77,7 +77,7 @@ RSpec.describe 'api/v1/cars', type: :request do
         let(:images) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/car.png'), 'image/png') }
         let(:car) do
           { name: 'Ford Focus', year: 2022, brand_id:, model_id:, images: [images], price: 100_000.00, km: 23.555,
-            used: true }
+            used: false }
         end
         run_test!
       end

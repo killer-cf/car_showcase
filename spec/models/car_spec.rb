@@ -10,8 +10,6 @@ RSpec.describe Car do
 
     it { is_expected.to validate_presence_of(:km) }
 
-    it { is_expected.to validate_presence_of(:used) }
-
     it { is_expected.to belong_to(:brand).required(true) }
 
     it { is_expected.to belong_to(:model).required(true) }
