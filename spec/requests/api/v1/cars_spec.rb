@@ -44,7 +44,12 @@ RSpec.describe 'api/v1/cars', type: :request do
                                                              created_at: '2021-08-10T00:00:00.000Z',
                                                              updated_at: '2021-08-10T00:00:00.000Z',
                                                              brand: 'Fiat',
-                                                             model: 'Uno' }] }
+                                                             model: 'Uno' }],
+                                                    meta: { current_page: 2,
+                                                            next_page: 3,
+                                                            prev_page: 1,
+                                                            total_pages: 10,
+                                                            total_count: 20 } }
         run_test!
       end
     end
