@@ -2,15 +2,29 @@ require 'rails_helper'
 
 describe Api::V1::UsersController do
   describe 'GET #index' do
-    it 'returns a success response' do
-      create_list(:user, 5)
+    let!(:users) { create_list(:user, 5) }
 
+    it 'returns a success response' do
       get :index, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
-      expect(json_response['users'].count).to eq(5)
+      json_response = response.parsed_body['users']
+      expect(json_response.count).to eq(5)
+    end
+
+    it 'paginates results and provide metadata' do
+      get :index, params: { page: 2, per_page: 2 }, format: :json
+
+      json_response = response.parsed_body['users']
+      expect(json_response.count).to eq(2)
+
+      meta = response.parsed_body['meta']
+      expect(meta['current_page']).to eq(2)
+      expect(meta['next_page']).to eq(3)
+      expect(meta['prev_page']).to eq(1)
+      expect(meta['total_pages']).to eq(3)
+      expect(meta['total_count']).to eq(5)
     end
   end
 
@@ -22,7 +36,7 @@ describe Api::V1::UsersController do
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['user']
       expect(json_response['name']).to eq(user.name)
       expect(json_response['tax_id']).to eq(user.tax_id)
     end
@@ -45,7 +59,7 @@ describe Api::V1::UsersController do
                params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', avatar:, email: 'kilder@gmail.com' } },
                format: :json
         end.to change(User, :count).by(1)
-        json_response = response.parsed_body
+        json_response = response.parsed_body['user']
         expect(json_response['avatar']['url']).to be_present
       end
 
@@ -55,7 +69,7 @@ describe Api::V1::UsersController do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = response.parsed_body
+        json_response = response.parsed_body['user']
         expect(json_response['name']).to eq('Kilder')
         expect(json_response['tax_id']).to eq('31.576.685/0001-42')
       end

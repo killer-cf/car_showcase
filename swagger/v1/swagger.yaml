@@ -226,8 +226,6 @@ paths:
                   type: string
                 year:
                   type: integer
-                status:
-                  type: integer
                 price:
                   type: decimal
                 km:
@@ -246,7 +244,6 @@ paths:
               required:
               - name
               - year
-              - status
               - brand_id
               - model_id
               - images
@@ -278,12 +275,13 @@ paths:
               examples:
                 example_key:
                   value:
-                    id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
-                    name: Ford Focus 2018
-                    year: 2022
-                    brand: Ford
-                    created_at: '2021-08-10T00:00:00.000Z'
-                    model: Focus
+                    car:
+                      id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      name: Ford Focus 2018
+                      year: 2022
+                      brand: Ford
+                      created_at: '2021-08-10T00:00:00.000Z'
+                      model: Focus
     put:
       summary: update car
       tags:
@@ -388,16 +386,17 @@ paths:
               examples:
                 example_key:
                   value:
-                  - id: ddf9cfdc-b795-45af-9f44-4f017ab105c3
-                    name: Mustang
-                    brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
-                    created_at: '2021-08-10T00:00:00.000Z'
-                    updated_at: '2021-08-10T00:00:00.000Z'
-                  - id: tff9cfdc-b795-45af-9f44-4f017ab105c3
-                    name: Maverick
-                    brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
-                    created_at: '2021-08-10T00:00:00.000Z'
-                    updated_at: '2021-08-10T00:00:00.000Z'
+                    models:
+                    - id: ddf9cfdc-b795-45af-9f44-4f017ab105c3
+                      name: Mustang
+                      brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      created_at: '2021-08-10T00:00:00.000Z'
+                      updated_at: '2021-08-10T00:00:00.000Z'
+                    - id: tff9cfdc-b795-45af-9f44-4f017ab105c3
+                      name: Maverick
+                      brand_id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      created_at: '2021-08-10T00:00:00.000Z'
+                      updated_at: '2021-08-10T00:00:00.000Z'
     post:
       summary: Creates a model
       tags:
@@ -545,11 +544,12 @@ paths:
               examples:
                 example_key:
                   value:
-                    id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
-                    name: Fiat Store
-                    phone: '81981316877'
-                    tax_id: '68005188000102'
-                    created_at: '2021-08-10T00:00:00.000Z'
+                    store:
+                      id: kkf9cfdc-b795-45af-9f44-4f017ab105c3
+                      name: Fiat Store
+                      phone: '81981316877'
+                      tax_id: '68005188000102'
+                      created_at: '2021-08-10T00:00:00.000Z'
     put:
       summary: update store
       tags:

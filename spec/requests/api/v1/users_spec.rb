@@ -46,11 +46,17 @@ RSpec.describe 'api/v1/users' do
         example 'application/json', :example_key, { id: 'string-uuid', name: 'Kilder', tax_id: '31.576.685/0001-42' }
         schema type: :object,
                properties: {
-                 id: { type: :string },
-                 name: { type: :string },
-                 tax_id: { type: :string }
+                 user: {
+                   type: :object,
+                   properties: {
+                     id: { type: :string },
+                     name: { type: :string },
+                     tax_id: { type: :string }
+                   },
+                   required: %w[id name tax_id]
+                 }
                },
-               required: %w[id name tax_id]
+               required: ['user']
 
         let(:id) { create(:user, name: 'Joao', tax_id: '31.576.685/0001-42').id }
         run_test!
