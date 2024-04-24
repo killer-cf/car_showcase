@@ -100,25 +100,28 @@ RSpec.describe 'api/v1/cars', type: :request do
     get('show car') do
       tags 'Cars'
       response(200, 'successful') do
-        example 'application/json', :example_key, { id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                    name: 'Ford Focus 2018',
-                                                    year: 2022,
-                                                    brand: 'Ford',
-                                                    created_at: '2021-08-10T00:00:00.000Z',
-                                                    model: 'Focus' }
+        example 'application/json', :example_key, { car: { id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                           name: 'Ford Focus 2018',
+                                                           year: 2022,
+                                                           brand: 'Ford',
+                                                           created_at: '2021-08-10T00:00:00.000Z',
+                                                           model: 'Focus' } }
         schema type: :object,
                properties: {
-                 id: { type: :string },
-                 name: { type: :string },
-                 year: { type: :integer },
-                 brand: { type: :string },
-                 model: { type: :string },
-                 price: { type: :decimal },
-                 km: { type: :decimal },
-                 used: { type: :boolean },
-                 created_at: { type: :string }
+                 car: {
+                   type: :object,
+                   properties: {
+                     id: { type: :string },
+                     name: { type: :string },
+                     year: { type: :integer },
+                     brand: { type: :string },
+                     model: { type: :string },
+                     created_at: { type: :string }
+                   },
+                   required: %w[id name year brand model created_at]
+                 }
                },
-               required: %w[id name year brand model created_at price km used]
+               required: ['car']
 
         let(:brand_id) { Brand.create!(name: 'Ford').id }
         let(:model_id) { Model.create!(name: 'Focus', brand_id:).id }
