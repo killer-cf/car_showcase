@@ -22,17 +22,31 @@ describe Api::V1::BrandsController do
 
   describe 'GET #index' do
     let(:user) { create(:user, super: true) }
+    let!(:brands) { create_list(:brand, 5) }
 
     it 'returns a success response' do
       request.headers['Authorization'] = "Bearer #{jwt}"
-      create_list(:brand, 5)
 
       get :index, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['brands']
       expect(json_response.count).to eq(5)
+    end
+
+    it 'paginates results and provide metadata' do
+      get :index, params: { page: 2, per_page: 2 }, format: :json
+
+      json_response = response.parsed_body['brands']
+      expect(json_response.count).to eq(2)
+
+      meta = response.parsed_body['meta']
+      expect(meta['current_page']).to eq(2)
+      expect(meta['next_page']).to eq(3)
+      expect(meta['prev_page']).to eq(1)
+      expect(meta['total_pages']).to eq(3)
+      expect(meta['total_count']).to eq(5)
     end
   end
 
@@ -48,7 +62,7 @@ describe Api::V1::BrandsController do
 
         expect(response).to be_successful
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = response.parsed_body
+        json_response = response.parsed_body['brand']
         expect(json_response['name']).to eq(brand.name)
       end
 
@@ -96,7 +110,7 @@ describe Api::V1::BrandsController do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = response.parsed_body
+        json_response = response.parsed_body['brand']
         expect(json_response['name']).to eq('Ford')
       end
 
@@ -199,17 +213,30 @@ describe Api::V1::BrandsController do
 
   describe 'GET #index_models' do
     let(:user) { create(:user) }
+    let!(:brand) { create(:brand) }
+    let!(:models) { create_list(:model, 5, brand: brand) }
 
     it 'returns a success response' do
-      brand = create(:brand)
-      create_list(:model, 5, brand:)
-
       get :index_models, params: { id: brand.to_param }, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['models']
       expect(json_response.count).to eq(5)
+    end
+
+    it 'paginates results and provide metadata' do
+      get :index_models, params: { id: brand.to_param, page: 2, per_page: 2 }, format: :json
+
+      json_response = response.parsed_body['models']
+      expect(json_response.count).to eq(2)
+
+      meta = response.parsed_body['meta']
+      expect(meta['current_page']).to eq(2)
+      expect(meta['next_page']).to eq(3)
+      expect(meta['prev_page']).to eq(1)
+      expect(meta['total_pages']).to eq(3)
+      expect(meta['total_count']).to eq(5)
     end
   end
 end
