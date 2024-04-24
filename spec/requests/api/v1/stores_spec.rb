@@ -33,7 +33,12 @@ RSpec.describe 'api/v1/stores' do
                                                                name: 'Fiat Store',
                                                                phone: '81981316877',
                                                                tax_id: '68005188000102',
-                                                               created_at: '2021-08-10T00:00:00.000Z' }] }
+                                                               created_at: '2021-08-10T00:00:00.000Z' }],
+                                                    meta: { current_page: 2,
+                                                            next_page: 3,
+                                                            prev_page: 1,
+                                                            total_pages: 10,
+                                                            total_count: 20 } }
         run_test!
       end
     end

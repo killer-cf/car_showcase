@@ -6,6 +6,27 @@ RSpec.describe 'api/v1/users' do
       tags 'Users'
       produces 'application/json', 'application/xml'
       response(200, 'successful') do
+        example 'application/json', :example_key, { users: [{ id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                              name: 'Kilder costa',
+                                                              tax_id: '31.576.685/0001-42',
+                                                              created_at: '2021-08-10T00:00:00.000Z',
+                                                              avatar: {
+                                                                id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                                url: 'http://localhost:3000/uploads/user/avatar/1/person.jpeg'
+                                                              } },
+                                                            { id: 'tff9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                              name: 'Leticia costa',
+                                                              tax_id: '31.576.685/0001-42',
+                                                              created_at: '2021-08-10T00:00:00.000Z',
+                                                              avatar: {
+                                                                id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                                url: 'http://localhost:3000/uploads/user/avatar/1/person.jpeg'
+                                                              } }],
+                                                    meta: { current_page: 2,
+                                                            next_page: 3,
+                                                            prev_page: 1,
+                                                            total_pages: 10,
+                                                            total_count: 20 } }
         run_test!
       end
     end
@@ -51,9 +72,18 @@ RSpec.describe 'api/v1/users' do
                    properties: {
                      id: { type: :string },
                      name: { type: :string },
-                     tax_id: { type: :string }
+                     tax_id: { type: :string },
+                     created_at: { type: :string },
+                     avatar: {
+                       type: :object,
+                       nullable: true,
+                       properties: {
+                         id: { type: :string },
+                         url: { type: :string }
+                       }
+                     }
                    },
-                   required: %w[id name tax_id]
+                   required: %w[id name tax_id created_at]
                  }
                },
                required: ['user']

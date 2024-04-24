@@ -32,7 +32,12 @@ RSpec.describe 'api/v1/brands' do
                                                              { id: 2,
                                                                name: 'Fiat',
                                                                created_at: '2021-08-10T00:00:00.000Z',
-                                                               updated_at: '2021-08-10T00:00:00.000Z' }] }
+                                                               updated_at: '2021-08-10T00:00:00.000Z' }],
+                                                    meta: { current_page: 2,
+                                                            next_page: 3,
+                                                            prev_page: 1,
+                                                            total_pages: 10,
+                                                            total_count: 20 } }
 
         run_test!
       end
@@ -188,7 +193,12 @@ RSpec.describe 'api/v1/brands' do
                                                                name: 'Focus',
                                                                brand_id: 'uuid',
                                                                created_at: '2021-08-10T00:00:00.000Z',
-                                                               updated_at: '2021-08-10T00:00:00.000Z' }] }
+                                                               updated_at: '2021-08-10T00:00:00.000Z' }],
+                                                    meta: { current_page: 2,
+                                                            next_page: 3,
+                                                            prev_page: 1,
+                                                            total_pages: 10,
+                                                            total_count: 20 } }
         run_test!
       end
     end
