@@ -35,7 +35,7 @@ describe Api::V1::CarsController do
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['cars']
       expect(json_response.count).to eq(15)
     end
 
@@ -43,7 +43,7 @@ describe Api::V1::CarsController do
       brand = brands.first
       get :index, params: { brand: brand.name }, format: :json
 
-      json_response = response.parsed_body
+      json_response = response.parsed_body['cars']
       expect(json_response).to(be_all { |car| car['brand'] == brand.name })
     end
 
@@ -51,7 +51,7 @@ describe Api::V1::CarsController do
       model = models.first
       get :index, params: { model: model.name }, format: :json
 
-      json_response = response.parsed_body
+      json_response = response.parsed_body['cars']
       expect(json_response).to(be_all { |car| car['model'] == model.name })
     end
 
@@ -59,15 +59,22 @@ describe Api::V1::CarsController do
       car_name = cars.first.name
       get :index, params: { search: car_name }, format: :json
 
-      json_response = response.parsed_body
+      json_response = response.parsed_body['cars']
       expect(json_response).to(be_all { |car| car['name'].include?(car_name) })
     end
 
-    it 'paginates results' do
+    it 'paginates results and provide metadata' do
       get :index, params: { page: 2, per_page: 2 }, format: :json
 
-      json_response = response.parsed_body
+      json_response = response.parsed_body['cars']
       expect(json_response.count).to eq(2)
+
+      meta = response.parsed_body['meta']
+      expect(meta['total_count']).to eq(15)
+      expect(meta['total_pages']).to eq(8)
+      expect(meta['current_page']).to eq(2)
+      expect(meta['next_page']).to eq(3)
+      expect(meta['prev_page']).to eq(1)
     end
 
     it 'combines filters' do
@@ -76,7 +83,7 @@ describe Api::V1::CarsController do
       car_name = model.cars.first.name
       get :index, params: { brand: brand.name, model: model.name, search: car_name }, format: :json
 
-      json_response = response.parsed_body
+      json_response = response.parsed_body['cars']
       expect(json_response.count).to eq(1)
       expect(json_response.first['brand']).to eq(brand.name)
       expect(json_response.first['model']).to eq(model.name)
@@ -94,7 +101,7 @@ describe Api::V1::CarsController do
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['car']
       expect(json_response['name']).to eq(car.name)
       expect(json_response['year']).to eq(car.year)
     end
@@ -118,7 +125,7 @@ describe Api::V1::CarsController do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = response.parsed_body
+        json_response = response.parsed_body['car']
         expect(json_response['name']).to eq('Ford Focus')
         expect(json_response['year']).to eq(2022)
       end

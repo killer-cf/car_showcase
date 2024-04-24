@@ -3,9 +3,9 @@ class Api::V1::BrandsController < ApplicationController
   before_action :set_brand, only: %i[show update destroy]
 
   def index
-    @brands = Brand.all
+    @brands = Brand.page(params[:page]).per(params[:per_page] || 20)
 
-    render json: @brands
+    render json: @brands, meta: pagination_dict(@brands)
   end
 
   def show
@@ -35,9 +35,9 @@ class Api::V1::BrandsController < ApplicationController
   end
 
   def index_models
-    @models = Brand.find(params[:id]).models
+    @models = Brand.find(params[:id]).models.page(params[:page]).per(params[:per_page] || 20)
 
-    render json: @models
+    render json: @models, meta: pagination_dict(@models)
   end
 
   private

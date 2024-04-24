@@ -25,16 +25,16 @@ RSpec.describe 'api/v1/models' do
       tags 'Models'
       produces 'application/json', 'application/xml'
       response(200, 'successful') do
-        example 'application/json', :example_key, [{ id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                     name: 'Mustang',
-                                                     brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                     created_at: '2021-08-10T00:00:00.000Z',
-                                                     updated_at: '2021-08-10T00:00:00.000Z' },
-                                                   { id: 'tff9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                     name: 'Maverick',
-                                                     brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                     created_at: '2021-08-10T00:00:00.000Z',
-                                                     updated_at: '2021-08-10T00:00:00.000Z' }]
+        example 'application/json', :example_key, { models: [{ id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                               name: 'Mustang',
+                                                               brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                               created_at: '2021-08-10T00:00:00.000Z',
+                                                               updated_at: '2021-08-10T00:00:00.000Z' },
+                                                             { id: 'tff9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                               name: 'Maverick',
+                                                               brand_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                               created_at: '2021-08-10T00:00:00.000Z',
+                                                               updated_at: '2021-08-10T00:00:00.000Z' }] }
 
         run_test!
       end

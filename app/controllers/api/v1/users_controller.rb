@@ -1,19 +1,16 @@
 class Api::V1::UsersController < ApplicationController
   before_action :set_user, only: %i[show update destroy]
 
-  # GET /users
   def index
-    @users = User.all
+    @users = User.page(params[:page]).per(params[:per_page] || 20)
 
-    render json: { users: @users }
+    render json: @users, meta: pagination_dict(@users)
   end
 
-  # GET /users/1
   def show
     render json: @user
   end
 
-  # POST /users
   def create
     @user = User.new(user_params)
 
@@ -24,7 +21,6 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /users/1
   def update
     if @user.update(user_params)
       render status: :no_content
@@ -33,7 +29,6 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
-  # DELETE /users/1
   def destroy
     @user.destroy!
   end

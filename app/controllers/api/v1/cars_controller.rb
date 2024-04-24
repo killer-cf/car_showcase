@@ -6,7 +6,7 @@ class Api::V1::CarsController < ApplicationController
   def index
     @cars = car_filter
 
-    render json: @cars
+    render json: @cars, meta: pagination_dict(@cars)
   end
 
   def show

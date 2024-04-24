@@ -3,9 +3,9 @@ class Api::V1::StoresController < ApplicationController
   before_action :set_store, only: %i[show update destroy]
 
   def index
-    @stores = Store.all
+    @stores = Store.all.page(params[:page]).per(params[:per_page] || 20)
 
-    render json: @stores
+    render json: @stores, meta: pagination_dict(@stores)
   end
 
   def show

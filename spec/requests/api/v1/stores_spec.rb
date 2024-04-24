@@ -90,20 +90,27 @@ RSpec.describe 'api/v1/stores' do
     get('show store') do
       tags 'Stores'
       response(200, 'successful') do
-        example 'application/json', :example_key, { id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                    name: 'Fiat Store',
-                                                    phone: '81981316877',
-                                                    tax_id: '68005188000102',
-                                                    created_at: '2021-08-10T00:00:00.000Z' }
+        example 'application/json', :example_key, { store: { id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                             name: 'Fiat Store',
+                                                             phone: '81981316877',
+                                                             tax_id: '68005188000102',
+                                                             created_at: '2021-08-10T00:00:00.000Z' } }
+
         schema type: :object,
                properties: {
-                 id: { type: :string },
-                 name: { type: :string },
-                 phone: { type: :string },
-                 tax_id: { type: :string },
-                 created_at: { type: :string }
+                 store: {
+                   type: :object,
+                   properties: {
+                     id: { type: :string },
+                     name: { type: :string },
+                     phone: { type: :string },
+                     tax_id: { type: :string },
+                     created_at: { type: :string }
+                   },
+                   required: %w[id name phone tax_id created_at]
+                 }
                },
-               required: %w[id name phone tax_id created_at]
+               required: ['store']
 
         let(:user) { create(:user, super: true) }
         let(:id) { create(:store).id }

@@ -2,9 +2,9 @@ class Api::V1::ModelsController < ApplicationController
   before_action :authenticate, except: %i[index]
 
   def index
-    @models = Model.all
+    @models = Model.page(params[:page]).per(params[:per_page] || 20)
 
-    render json: @models
+    render json: @models, meta: pagination_dict(@models)
   end
 
   def create

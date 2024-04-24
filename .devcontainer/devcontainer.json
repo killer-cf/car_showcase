@@ -1,0 +1,72 @@
+{
+  "name": "CS API",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "features": {
+    "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+      "packages": "libpq-dev, libvips, postgresql-client-15"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/ruby:1": {
+      "version": "3.3.0"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": 20
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "vscode",
+      "userUid": 1000,
+      "userGid": 1000,
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "configureZshAsDefaultShell": true,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {
+      "username": "vscode",
+      "plugins": "bundler rails ruby yarn git git-flow F-Sy-H zsh-autosuggestions zsh-completions",
+      "omzPlugins": "https://github.com/z-shell/F-Sy-H.git https://github.com/zsh-users/zsh-autosuggestions.git https://github.com/zsh-users/zsh-completions.git"
+    },
+    "ghcr.io/devcontainers/features/sshd:1": {
+      "version": "latest"
+    },
+    "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {
+
+    }
+  },
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": ["castwide.solargraph", "misogi.ruby-rubocop", "koichiSasada.vscode-rdbg"],
+      "settings": {
+        "ruby.rubocop.onSave": true,
+        "[ruby]": {
+          "editor.formatOnSave": true,
+          "editor.formatOnType": true,
+          "editor.insertSpaces": true,
+          "files.trimTrailingWhitespace": true,
+          "files.insertFinalNewline": true,
+          "files.trimFinalNewlines": true,
+          "ruby.rubocop.executePath": "/usr/local/rvm/gems/default/bin",
+          "ruby.rubocop.configFilePath": ".rubocop.yml",
+      
+          "editor.rulers": [
+            120
+          ]
+        },
+        "solargraph.useBundler": true,
+        "solargraph.bundlerPath": "/usr/local/rvm/gems/default/bin/bundle"
+      }
+    }
+  },
+
+  "forwardPorts": [5432, 3000],
+
+  "onCreateCommand": "gem install solargraph solargraph-rails && bundle exec yard gems",
+
+  "postCreateCommand": ".devcontainer/boot.sh"
+}
