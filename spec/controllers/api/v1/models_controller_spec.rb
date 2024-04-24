@@ -21,15 +21,29 @@ describe Api::V1::ModelsController do
   end
 
   describe 'GET #index' do
-    it 'returns a success response' do
-      create_list(:model, 5)
+    let!(:models) { create_list(:model, 5) }
 
+    it 'returns a success response' do
       get :index, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['models']
       expect(json_response.count).to eq(5)
+    end
+
+    it 'paginates results and provide metadata' do
+      get :index, params: { page: 2, per_page: 2 }, format: :json
+
+      json_response = response.parsed_body['models']
+      expect(json_response.count).to eq(2)
+
+      meta = response.parsed_body['meta']
+      expect(meta['current_page']).to eq(2)
+      expect(meta['next_page']).to eq(3)
+      expect(meta['prev_page']).to eq(1)
+      expect(meta['total_pages']).to eq(3)
+      expect(meta['total_count']).to eq(5)
     end
   end
 
@@ -55,7 +69,7 @@ describe Api::V1::ModelsController do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = response.parsed_body
+        json_response = response.parsed_body['model']
         expect(json_response['name']).to eq('Mustang')
         expect(json_response['brand_id']).to eq(brand_id)
       end
