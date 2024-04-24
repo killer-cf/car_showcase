@@ -22,17 +22,31 @@ describe Api::V1::StoresController do
 
   describe 'GET #index' do
     let(:user) { create(:user, super: false) }
+    let!(:stores) { create_list(:store, 5) }
 
     it 'returns a success response' do
       request.headers['Authorization'] = "Bearer #{jwt}"
-      create_list(:store, 5)
 
       get :index, format: :json
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['stores']
       expect(json_response.count).to eq(5)
+    end
+
+    it 'paginates results and provide metadata' do
+      get :index, params: { page: 2, per_page: 2 }, format: :json
+
+      json_response = response.parsed_body['stores']
+      expect(json_response.count).to eq(2)
+
+      meta = response.parsed_body['meta']
+      expect(meta['current_page']).to eq(2)
+      expect(meta['next_page']).to eq(3)
+      expect(meta['prev_page']).to eq(1)
+      expect(meta['total_pages']).to eq(3)
+      expect(meta['total_count']).to eq(5)
     end
   end
 
@@ -47,7 +61,7 @@ describe Api::V1::StoresController do
 
       expect(response).to be_successful
       expect(response.content_type).to eq('application/json; charset=utf-8')
-      json_response = response.parsed_body
+      json_response = response.parsed_body['store']
       expect(json_response['name']).to eq(store.name)
     end
   end
@@ -74,7 +88,7 @@ describe Api::V1::StoresController do
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        json_response = response.parsed_body
+        json_response = response.parsed_body['store']
         expect(json_response['name']).to eq(store[:name])
       end
 
