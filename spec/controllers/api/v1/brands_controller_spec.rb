@@ -48,6 +48,15 @@ describe Api::V1::BrandsController do
       expect(meta['total_pages']).to eq(3)
       expect(meta['total_count']).to eq(5)
     end
+
+    it 'can return non pagineted results' do
+      get :index, format: :json
+
+      expect(response).to be_successful
+      expect(response.content_type).to eq('application/json; charset=utf-8')
+      json_response = response.parsed_body['brands']
+      expect(json_response.count).to eq(5)
+    end
   end
 
   describe 'GET #show' do
