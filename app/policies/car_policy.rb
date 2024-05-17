@@ -34,6 +34,6 @@ class CarPolicy < ApplicationPolicy
   end
 
   def employee_admin?
-    user&.employee&.store_id == record.store_id && user&.employee&.admin?
+    user&.admin? && user&.employee&.store_id == record.store_id
   end
 end

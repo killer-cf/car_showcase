@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  enum role: { user: 0, admin: 10, super: 20 }
+
   has_one :store, dependent: :destroy
   has_one :employee, dependent: :destroy
   has_one_attached :avatar
