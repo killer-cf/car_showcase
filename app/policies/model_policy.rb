@@ -4,16 +4,10 @@ class ModelPolicy < ApplicationPolicy
   end
 
   def create?
-    user_is_super?
+    user&.super?
   end
 
   def destroy?
-    user_is_super?
-  end
-
-  private
-
-  def user_is_super?
     user&.super?
   end
 end

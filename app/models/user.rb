@@ -1,11 +1,12 @@
 class User < ApplicationRecord
+  enum role: { user: 0, admin: 10, super: 20 }
+
   has_one :store, dependent: :destroy
   has_one :employee, dependent: :destroy
   has_one_attached :avatar
 
   validates :name, :tax_id, :email, presence: true
   validates :tax_id, :email, uniqueness: true
-  validates :super, exclusion: { in: [nil], message: 'não foi fornecido' }, inclusion: { in: [false, true] }
   validates :name, length: { minimum: 3, maximum: 50 }
   validates :avatar, content_type: %i[png jpeg], size: { less_than: 100.megabytes }
   validate :valid_cpf_or_cnpj

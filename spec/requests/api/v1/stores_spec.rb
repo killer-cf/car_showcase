@@ -59,28 +59,28 @@ RSpec.describe 'api/v1/stores' do
       }
 
       response '201', 'store created' do
-        let(:user) { create(:user, super: true) }
+        let(:user) { create(:user, role: :super) }
         let(:authorization) { "Bearer #{jwt}" }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '84737100000195', user_id: user.id } }
         run_test!
       end
 
       response '422', 'invalid request' do
-        let(:user) { create(:user, super: true) }
+        let(:user) { create(:user, role: :super) }
         let(:authorization) { "Bearer #{jwt}" }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '84737100000195' } }
         run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:user) { create(:user, super: false) }
+        let(:user) { create(:user, role: :user) }
         let(:authorization) { nil }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '84737100000195' } }
         run_test!
       end
 
       response '403', 'forbidden' do
-        let(:user) { create(:user, super: false) }
+        let(:user) { create(:user, role: :user) }
         let(:authorization) { "Bearer #{jwt}" }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '84737100000195' } }
         run_test!
@@ -117,7 +117,7 @@ RSpec.describe 'api/v1/stores' do
                },
                required: ['store']
 
-        let(:user) { create(:user, super: true) }
+        let(:user) { create(:user, role: :super) }
         let(:id) { create(:store).id }
         let(:authorization) { "Bearer #{jwt}" }
 
@@ -141,7 +141,7 @@ RSpec.describe 'api/v1/stores' do
       }
 
       response(204, 'successful') do
-        let(:user) { create(:user, super: true) }
+        let(:user) { create(:user, role: :super) }
         let(:id) { create(:store).id }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '68005188000102' } }
         let(:authorization) { "Bearer #{jwt}" }
@@ -157,7 +157,7 @@ RSpec.describe 'api/v1/stores' do
       end
 
       response(403, 'forbidden') do
-        let(:user) { create(:user, super: false) }
+        let(:user) { create(:user, role: :user) }
         let(:id) { create(:store).id }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '68005188000102' } }
         let(:authorization) { "Bearer #{jwt}" }
@@ -168,7 +168,7 @@ RSpec.describe 'api/v1/stores' do
     delete('delete store') do
       tags 'Stores'
       response(204, 'successful') do
-        let(:user) { create(:user, super: true) }
+        let(:user) { create(:user, role: :super) }
         let(:id) { create(:store).id }
         let(:authorization) { "Bearer #{jwt}" }
         run_test!
@@ -182,7 +182,7 @@ RSpec.describe 'api/v1/stores' do
       end
 
       response(403, 'forbidden') do
-        let(:user) { create(:user, super: false) }
+        let(:user) { create(:user, role: :user) }
         let(:id) { create(:store).id }
         let(:authorization) { "Bearer #{jwt}" }
         run_test!

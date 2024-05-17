@@ -21,7 +21,7 @@ describe Api::V1::BrandsController do
   end
 
   describe 'GET #index' do
-    let(:user) { create(:user, super: true) }
+    let(:user) { create(:user, role: :super) }
     let!(:brands) { create_list(:brand, 5) }
 
     it 'returns a success response' do
@@ -61,7 +61,7 @@ describe Api::V1::BrandsController do
 
   describe 'GET #show' do
     context '' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
 
       it 'returns a success response' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -85,7 +85,7 @@ describe Api::V1::BrandsController do
     end
 
     context 'authenticated but not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not show brand for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -100,7 +100,7 @@ describe Api::V1::BrandsController do
 
   describe 'POST #create' do
     context 'with valid params' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
 
       it 'creates a new Brand' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -132,7 +132,7 @@ describe Api::V1::BrandsController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not create brand for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -147,7 +147,7 @@ describe Api::V1::BrandsController do
 
   describe 'PUT #update' do
     context 'with valid params' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
       let(:new_attributes) do
         { name: 'Ford' }
       end
@@ -170,7 +170,7 @@ describe Api::V1::BrandsController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not update brand for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -185,7 +185,7 @@ describe Api::V1::BrandsController do
 
   describe 'DELETE #destroy' do
     context '' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
 
       it 'deletes the Brand' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -207,7 +207,7 @@ describe Api::V1::BrandsController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not delete brand for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"

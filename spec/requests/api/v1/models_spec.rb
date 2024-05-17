@@ -1,7 +1,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/models' do
-  let(:user) { create(:user, super: true) }
+  let(:user) { create(:user, role: :super) }
   let(:jwt) do
     claims = {
       iat: Time.zone.now.to_i,

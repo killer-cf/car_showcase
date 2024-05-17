@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_11_190934) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_17_193656) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -70,7 +70,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_11_190934) do
     t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "role", default: 0
     t.index ["store_id"], name: "index_employees_on_store_id"
     t.index ["user_id"], name: "index_employees_on_user_id"
   end
@@ -99,8 +98,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_11_190934) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "keycloak_id"
-    t.boolean "super", default: false
     t.string "email"
+    t.integer "role", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["keycloak_id"], name: "index_users_on_keycloak_id"
     t.index ["tax_id"], name: "index_users_on_tax_id", unique: true
