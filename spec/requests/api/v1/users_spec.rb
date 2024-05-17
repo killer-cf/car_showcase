@@ -9,19 +9,24 @@ RSpec.describe 'api/v1/users' do
         example 'application/json', :example_key, { users: [{ id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                               name: 'Kilder costa',
                                                               tax_id: '31.576.685/0001-42',
+                                                              role: 'ADMIN',
+                                                              email: 'kilder@live.com',
                                                               created_at: '2021-08-10T00:00:00.000Z',
-                                                              avatar: {
-                                                                id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
-                                                                url: 'http://localhost:3000/uploads/user/avatar/1/person.jpeg'
-                                                              } },
+                                                              avatar: 'null',
+                                                              employee: { id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                                          store_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3' } },
                                                             { id: 'tff9cfdc-b795-45af-9f44-4f017ab105c3',
                                                               name: 'Leticia costa',
                                                               tax_id: '31.576.685/0001-42',
+                                                              role: 'ADMIN',
+                                                              email: 'kilder@live.com',
                                                               created_at: '2021-08-10T00:00:00.000Z',
                                                               avatar: {
                                                                 id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
                                                                 url: 'http://localhost:3000/uploads/user/avatar/1/person.jpeg'
-                                                              } }],
+                                                              },
+                                                              employee: { id: 'ddf9cfdc-b795-45af-9f44-4f017ab105c3',
+                                                                          store_id: 'kkf9cfdc-b795-45af-9f44-4f017ab105c3' } }],
                                                     meta: { current_page: 2,
                                                             next_page: 3,
                                                             prev_page: 1,
@@ -72,6 +77,8 @@ RSpec.describe 'api/v1/users' do
                    properties: {
                      id: { type: :string },
                      name: { type: :string },
+                     emai: { type: :string },
+                     role: { type: :string },
                      tax_id: { type: :string },
                      created_at: { type: :string },
                      avatar: {
@@ -80,6 +87,14 @@ RSpec.describe 'api/v1/users' do
                        properties: {
                          id: { type: :string },
                          url: { type: :string }
+                       }
+                     },
+                     employee: {
+                       type: :object,
+                       nullable: true,
+                       properties: {
+                         id: { type: :string },
+                         store_id: { type: :string }
                        }
                      }
                    },
@@ -102,14 +117,14 @@ RSpec.describe 'api/v1/users' do
         type: :object,
         properties: {
           name: { type: :string },
-          tax_id: { type: :string }
-        },
-        required: %w[name tax_id]
+          tax_id: { type: :string },
+          email: { type: :string }
+        }
       }
 
       response(204, 'successful') do
         let(:id) { create(:user, name: 'Joao', tax_id: '31.576.685/0001-42').id }
-        let(:user) { { name: 'foo', tax_id: '452.875.860-19' } }
+        let(:user) { { name: 'foo', tax_id: '452.875.860-19', email: 'costa@live.com' } }
         run_test!
       end
     end
