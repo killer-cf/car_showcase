@@ -21,7 +21,7 @@ describe Api::V1::StoresController do
   end
 
   describe 'GET #index' do
-    let(:user) { create(:user, super: false) }
+    let(:user) { create(:user, role: :user) }
     let!(:stores) { create_list(:store, 5) }
 
     it 'returns a success response' do
@@ -51,7 +51,7 @@ describe Api::V1::StoresController do
   end
 
   describe 'GET #show' do
-    let(:user) { create(:user, super: false) }
+    let(:user) { create(:user, role: :user) }
 
     it 'returns a success response' do
       request.headers['Authorization'] = "Bearer #{jwt}"
@@ -68,7 +68,7 @@ describe Api::V1::StoresController do
 
   describe 'POST #create' do
     context 'with valid params' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
       let(:store) { attributes_for(:store).merge(user_id: user.id) }
 
       it 'creates a new Store' do
@@ -101,7 +101,7 @@ describe Api::V1::StoresController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not create store for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -116,7 +116,7 @@ describe Api::V1::StoresController do
 
   describe 'PUT #update' do
     context 'with valid params' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
       let(:new_attributes) do
         { name: 'Ford' }
       end
@@ -139,7 +139,7 @@ describe Api::V1::StoresController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not update store for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -154,7 +154,7 @@ describe Api::V1::StoresController do
 
   describe 'DELETE #destroy' do
     context '' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
 
       it 'deletes the Store' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -176,7 +176,7 @@ describe Api::V1::StoresController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not delete store for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"

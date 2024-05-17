@@ -50,7 +50,7 @@ describe Api::V1::ModelsController do
   describe 'POST #create' do
     context 'with valid params' do
       let(:brand_id) { create(:brand).id }
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
 
       it 'creates a new Model' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -83,7 +83,7 @@ describe Api::V1::ModelsController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
       let(:brand_id) { create(:brand).id }
 
       it 'does not create brand for non-super user' do
@@ -99,7 +99,7 @@ describe Api::V1::ModelsController do
 
   describe 'DELETE #destroy' do
     context '' do
-      let(:user) { create(:user, super: true) }
+      let(:user) { create(:user, role: :super) }
 
       it 'deletes the Model' do
         request.headers['Authorization'] = "Bearer #{jwt}"
@@ -121,7 +121,7 @@ describe Api::V1::ModelsController do
     end
 
     context 'user not super' do
-      let(:user) { create(:user, super: false) }
+      let(:user) { create(:user, role: :user) }
 
       it 'does not delete model for non-super user' do
         request.headers['Authorization'] = "Bearer #{jwt}"

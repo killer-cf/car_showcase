@@ -15,8 +15,8 @@ RSpec.describe CarPolicy, type: :policy do
   end
 
   context 'with administrators' do
-    let(:user) { create(:user) }
-    let!(:employee) { create(:employee, store: store, user: user, role: :admin) }
+    let(:user) { create(:user, role: :admin) }
+    let!(:employee) { create(:employee, store: store, user: user) }
 
     it { is_expected.to permit_all_actions }
   end
