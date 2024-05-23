@@ -17,6 +17,8 @@ gem 'pundit'
 
 gem 'pg', '~> 1.1'
 
+gem 'jwt'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
