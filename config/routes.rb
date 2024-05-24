@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get 'supabase/users/:supabase_id' => 'users#show_by_supabase_id'
       resources :users
       resources :cars do
         member do

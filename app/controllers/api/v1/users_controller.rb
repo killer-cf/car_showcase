@@ -33,10 +33,20 @@ class Api::V1::UsersController < ApplicationController
     @user.destroy!
   end
 
+  def show_by_supabase_id
+    @user = User.find_by(supabase_id: params[:supabase_id])
+
+    render json: @user
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User with supabase id: #{params[:supabase_id]} not found" }, status: :not_found
+  end
+
   private
 
   def set_user
     @user = User.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User with id: #{params[:id]} not found" }, status: :not_found
   end
 
   def user_params
