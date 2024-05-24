@@ -2,23 +2,6 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/models' do
   let(:user) { create(:user, role: :super) }
-  let(:jwt) do
-    claims = {
-      iat: Time.zone.now.to_i,
-      exp: 1.day.from_now.to_i,
-      sub: user.keycloak_id
-    }
-    token = JSON::JWT.new(claims)
-    token.kid = 'default'
-    token.sign($private_key, :RS256).to_s
-  end
-
-  before do
-    public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) {
-                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
-                                  }
-  end
 
   path '/api/v1/models' do
     get('list models') do
@@ -61,7 +44,7 @@ RSpec.describe 'api/v1/models' do
                            summary: '201_response'
 
       response '201', 'model created' do
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
 
         let(:brand_id) { create(:brand).id }
         let(:model) { { name: 'foo', brand_id: } }
@@ -77,7 +60,7 @@ RSpec.describe 'api/v1/models' do
 
       response(403, 'forbidden') do
         let(:user) { create(:user) }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         let(:brand_id) { create(:brand).id }
         let(:model) { { name: 'foo', brand_id: } }
         run_test!
@@ -92,7 +75,7 @@ RSpec.describe 'api/v1/models' do
     delete('delete model') do
       tags 'Models'
       response(204, 'successful') do
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
 
         let(:brand_id) { create(:brand).id }
         let(:id) { create(:model, brand_id:).id }
@@ -110,7 +93,7 @@ RSpec.describe 'api/v1/models' do
         let(:user) { create(:user) }
         let(:brand_id) { create(:brand).id }
         let(:id) { create(:model, brand_id:).id }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
     end

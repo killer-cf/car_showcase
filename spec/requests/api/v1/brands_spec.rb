@@ -2,23 +2,6 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/brands' do
   let(:user) { create(:user, role: :super) }
-  let(:jwt) do
-    claims = {
-      iat: Time.zone.now.to_i,
-      exp: 1.day.from_now.to_i,
-      sub: user.keycloak_id
-    }
-    token = JSON::JWT.new(claims)
-    token.kid = 'default'
-    token.sign($private_key, :RS256).to_s
-  end
-
-  before do
-    public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) {
-                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
-                                  }
-  end
 
   path '/api/v1/brands' do
     get('list brands') do
@@ -57,7 +40,7 @@ RSpec.describe 'api/v1/brands' do
       request_body_example value: { name: 'Ford' }, name: '201', summary: '201_response'
 
       response '201', 'brand created' do
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
 
         let(:brand) { { name: 'foo' } }
         run_test!
@@ -71,7 +54,7 @@ RSpec.describe 'api/v1/brands' do
 
       response(403, 'forbidden') do
         let(:user) { create(:user) }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         let(:brand) { { name: 'foo' } }
         run_test!
       end
@@ -85,7 +68,7 @@ RSpec.describe 'api/v1/brands' do
     get('show brand') do
       tags 'Brands'
       response(200, 'successful') do
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         example 'application/json', :example_key, { brand: { id: 1,
                                                              name: 'Ford',
                                                              created_at: '2021-08-10T00:00:00.000Z',
@@ -112,7 +95,7 @@ RSpec.describe 'api/v1/brands' do
       response(403, 'forbidden') do
         let(:user) { create(:user) }
         let(:id) { Brand.create(name: 'Pegeout').id }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
     end
@@ -131,7 +114,7 @@ RSpec.describe 'api/v1/brands' do
       }
 
       response(204, 'successful') do
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         let(:id) { Brand.create(name: 'Pegeout').id }
         let(:brand) { { name: 'foo' } }
         run_test!
@@ -148,7 +131,7 @@ RSpec.describe 'api/v1/brands' do
         let(:user) { create(:user) }
         let(:id) { Brand.create(name: 'Pegeout').id }
         let(:brand) { { name: 'foo' } }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
     end
@@ -156,7 +139,7 @@ RSpec.describe 'api/v1/brands' do
     delete('delete brand') do
       tags 'Brands'
       response(204, 'successful') do
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
 
         let(:id) { Brand.create(name: 'Pegeout').id }
         run_test!
@@ -171,7 +154,7 @@ RSpec.describe 'api/v1/brands' do
       response(403, 'forbidden') do
         let(:user) { create(:user) }
         let(:id) { Brand.create(name: 'Pegeout').id }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
     end

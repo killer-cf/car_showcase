@@ -1,24 +1,6 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/stores' do
-  let(:jwt) do
-    claims = {
-      iat: Time.zone.now.to_i,
-      exp: 1.day.from_now.to_i,
-      sub: user.keycloak_id
-    }
-    token = JSON::JWT.new(claims)
-    token.kid = 'default'
-    token.sign($private_key, :RS256).to_s
-  end
-
-  before do
-    public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) {
-                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
-                                  }
-  end
-
   path '/api/v1/stores' do
     get('list stores') do
       tags 'Stores'
@@ -60,14 +42,14 @@ RSpec.describe 'api/v1/stores' do
 
       response '201', 'store created' do
         let(:user) { create(:user, role: :super) }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '84737100000195', user_id: user.id } }
         run_test!
       end
 
       response '422', 'invalid request' do
         let(:user) { create(:user, role: :super) }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '84737100000195' } }
         run_test!
       end
@@ -81,7 +63,7 @@ RSpec.describe 'api/v1/stores' do
 
       response '403', 'forbidden' do
         let(:user) { create(:user, role: :user) }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '84737100000195' } }
         run_test!
       end
@@ -119,7 +101,7 @@ RSpec.describe 'api/v1/stores' do
 
         let(:user) { create(:user, role: :super) }
         let(:id) { create(:store).id }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
 
         run_test!
       end
@@ -144,7 +126,7 @@ RSpec.describe 'api/v1/stores' do
         let(:user) { create(:user, role: :super) }
         let(:id) { create(:store).id }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '68005188000102' } }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
 
@@ -160,7 +142,7 @@ RSpec.describe 'api/v1/stores' do
         let(:user) { create(:user, role: :user) }
         let(:id) { create(:store).id }
         let(:store) { { name: 'Fiat Store', phone: '81981316877', tax_id: '68005188000102' } }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
     end
@@ -170,7 +152,7 @@ RSpec.describe 'api/v1/stores' do
       response(204, 'successful') do
         let(:user) { create(:user, role: :super) }
         let(:id) { create(:store).id }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
 
@@ -184,7 +166,7 @@ RSpec.describe 'api/v1/stores' do
       response(403, 'forbidden') do
         let(:user) { create(:user, role: :user) }
         let(:id) { create(:store).id }
-        let(:authorization) { "Bearer #{jwt}" }
+        let(:authorization) { "Bearer #{generate_jwt(user)}" }
         run_test!
       end
     end

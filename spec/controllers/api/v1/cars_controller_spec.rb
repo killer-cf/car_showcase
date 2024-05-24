@@ -2,24 +2,7 @@ require 'rails_helper'
 
 describe Api::V1::CarsController do
   let(:user) { create(:user) }
-  let(:jwt) do
-    claims = {
-      iat: Time.zone.now.to_i,
-      exp: 1.day.from_now.to_i,
-      sub: user.keycloak_id
-    }
-    token = JSON::JWT.new(claims)
-    token.kid = 'default'
-    token.sign($private_key, :RS256).to_s
-  end
-
-  before do
-    request.env['REQUEST_URI'] = api_v1_cars_path
-    public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) {
-                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
-                                  }
-  end
+  let(:authorization) { { 'Authorization' => "Bearer #{generate_jwt(user)}" } }
 
   describe 'GET #index' do
     let!(:brands) { create_list(:brand, 3) }
@@ -115,7 +98,7 @@ describe Api::V1::CarsController do
 
       it 'creates a new Car and return it as json' do
         create(:store, user:)
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         expect do
           post :create, params: { car: { name: 'Ford Focus', year: 2022, brand_id:, model_id:, images: [images],
@@ -134,7 +117,7 @@ describe Api::V1::CarsController do
     context 'with invalid params' do
       it 'renders a JSON response with errors for the new car' do
         create(:store, user:)
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         post :create, params: { car: { name: 'Ford Focus' } }, format: :json
         expect(response).to have_http_status(:unprocessable_entity)
@@ -150,7 +133,7 @@ describe Api::V1::CarsController do
       end
 
       it 'unauthorized (no store)' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         post :create, params: { car: { name: 'Ford Focus' } }, format: :json
         expect(response).to have_http_status(:bad_request)
@@ -169,7 +152,7 @@ describe Api::V1::CarsController do
       end
 
       it 'updates the requested car' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         car = create(:car, brand:, model:, store: create(:store, user:))
         put :update, params: { id: car.to_param, store_id: car.store_id, car: new_attributes }, format: :json
@@ -189,7 +172,7 @@ describe Api::V1::CarsController do
       it 'does not update the car for unauthorized user' do
         car = create(:car, brand:, model:)
 
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         put :update, params: { id: car.to_param, store_id: car.store_id, car: new_attributes }, format: :json
         car.reload
@@ -201,7 +184,7 @@ describe Api::V1::CarsController do
 
   describe 'DELETE #destroy' do
     it 'deletes the Car' do
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       brand = create(:brand)
       model = create(:model, brand:)
@@ -229,7 +212,7 @@ describe Api::V1::CarsController do
       model = create(:model, brand:)
       car = create(:car, brand:, model:)
 
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       expect do
         delete :destroy, params: { id: car.id, store_id: car.store_id }, format: :json
@@ -240,7 +223,7 @@ describe Api::V1::CarsController do
 
   describe 'PATCH #activate' do
     it 'activates the Car' do
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       brand = create(:brand)
       model = create(:model, brand:)
@@ -267,7 +250,7 @@ describe Api::V1::CarsController do
       model = create(:model, brand:)
       car = create(:car, brand:, model:, status: :inactive)
 
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       patch :activate, params: { id: car.id, store_id: car.store_id }, format: :json
       car.reload
@@ -278,7 +261,7 @@ describe Api::V1::CarsController do
 
   describe 'PATCH #sell' do
     it 'sells the Car' do
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       brand = create(:brand)
       model = create(:model, brand:)
@@ -305,7 +288,7 @@ describe Api::V1::CarsController do
       model = create(:model, brand:)
       car = create(:car, brand:, model:, status: :active)
 
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       patch :sell, params: { id: car.id, store_id: car.store_id }, format: :json
       car.reload
@@ -314,7 +297,7 @@ describe Api::V1::CarsController do
     end
 
     it 'sends an email when the car is sold' do
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       brand = create(:brand)
       model = create(:model, brand:)

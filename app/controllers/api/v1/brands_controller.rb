@@ -17,7 +17,6 @@ class Api::V1::BrandsController < ApplicationController
   end
 
   def create
-    puts @current_user || 'no current user'
     @brand = authorize Brand.new(brand_params)
 
     if @brand.save

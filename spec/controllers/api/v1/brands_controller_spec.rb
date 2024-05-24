@@ -1,31 +1,14 @@
 require 'rails_helper'
 
 describe Api::V1::BrandsController do
-  let(:jwt) do
-    claims = {
-      iat: Time.zone.now.to_i,
-      exp: 1.day.from_now.to_i,
-      sub: user.keycloak_id
-    }
-    token = JSON::JWT.new(claims)
-    token.kid = 'default'
-    token.sign($private_key, :RS256).to_s
-  end
-
-  before do
-    request.env['REQUEST_URI'] = api_v1_cars_path
-    public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) {
-                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
-                                  }
-  end
+  let(:authorization) { { 'Authorization' => "Bearer #{generate_jwt(user)}" } }
 
   describe 'GET #index' do
     let(:user) { create(:user, role: :super) }
     let!(:brands) { create_list(:brand, 5) }
 
     it 'returns a success response' do
-      request.headers['Authorization'] = "Bearer #{jwt}"
+      request.headers.merge!(authorization)
 
       get :index, format: :json
 
@@ -64,7 +47,7 @@ describe Api::V1::BrandsController do
       let(:user) { create(:user, role: :super) }
 
       it 'returns a success response' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         brand = create(:brand)
 
         get :show, params: { id: brand.to_param }, format: :json
@@ -88,7 +71,7 @@ describe Api::V1::BrandsController do
       let(:user) { create(:user, role: :user) }
 
       it 'does not show brand for non-super user' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         brand = create(:brand)
 
         get :show, params: { id: brand.to_param }, format: :json
@@ -103,7 +86,7 @@ describe Api::V1::BrandsController do
       let(:user) { create(:user, role: :super) }
 
       it 'creates a new Brand' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         expect do
           post :create, params: { brand: { name: 'Ford' } },
@@ -112,7 +95,7 @@ describe Api::V1::BrandsController do
       end
 
       it 'renders a JSON response with the new brand' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         post :create, params: { brand: { name: 'Ford' } },
                       format: :json
@@ -135,7 +118,7 @@ describe Api::V1::BrandsController do
       let(:user) { create(:user, role: :user) }
 
       it 'does not create brand for non-super user' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         post :create, params: { brand: { name: 'Ford' } },
                       format: :json
@@ -153,7 +136,7 @@ describe Api::V1::BrandsController do
       end
 
       it 'updates the requested brand' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         brand = create(:brand)
         put :update, params: { id: brand.to_param, brand: new_attributes }, format: :json
         brand.reload
@@ -173,7 +156,7 @@ describe Api::V1::BrandsController do
       let(:user) { create(:user, role: :user) }
 
       it 'does not update brand for non-super user' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         brand = create(:brand)
 
         put :update, params: { id: brand.to_param, brand: { name: 'Ford' } }, format: :json
@@ -188,7 +171,7 @@ describe Api::V1::BrandsController do
       let(:user) { create(:user, role: :super) }
 
       it 'deletes the Brand' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         brand = create(:brand)
 
         expect do
@@ -210,7 +193,7 @@ describe Api::V1::BrandsController do
       let(:user) { create(:user, role: :user) }
 
       it 'does not delete brand for non-super user' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         brand = create(:brand)
 
         delete :destroy, params: { id: brand.id }, format: :json

@@ -1,24 +1,7 @@
 require 'rails_helper'
 
 describe Api::V1::ModelsController do
-  let(:jwt) do
-    claims = {
-      iat: Time.zone.now.to_i,
-      exp: 1.day.from_now.to_i,
-      sub: user.keycloak_id
-    }
-    token = JSON::JWT.new(claims)
-    token.kid = 'default'
-    token.sign($private_key, :RS256).to_s
-  end
-
-  before do
-    request.env['REQUEST_URI'] = api_v1_cars_path
-    public_key_resolver = Keycloak.public_key_resolver
-    allow(public_key_resolver).to receive(:find_public_keys) {
-                                    JSON::JWK::Set.new(JSON::JWK.new($private_key, kid: 'default'))
-                                  }
-  end
+  let(:authorization) { { 'Authorization' => "Bearer #{generate_jwt(user)}" } }
 
   describe 'GET #index' do
     let!(:models) { create_list(:model, 5) }
@@ -53,7 +36,7 @@ describe Api::V1::ModelsController do
       let(:user) { create(:user, role: :super) }
 
       it 'creates a new Model' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         expect do
           post :create, params: { model: { name: 'Mustang', brand_id: } },
@@ -62,7 +45,7 @@ describe Api::V1::ModelsController do
       end
 
       it 'renders a JSON response with the new model' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         post :create, params: { model: { name: 'Mustang', brand_id: } },
                       format: :json
@@ -87,7 +70,7 @@ describe Api::V1::ModelsController do
       let(:brand_id) { create(:brand).id }
 
       it 'does not create brand for non-super user' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
 
         post :create, params: { model: { name: 'Mustang', brand_id: } },
                       format: :json
@@ -102,7 +85,7 @@ describe Api::V1::ModelsController do
       let(:user) { create(:user, role: :super) }
 
       it 'deletes the Model' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         model = create(:model)
 
         expect do
@@ -124,7 +107,7 @@ describe Api::V1::ModelsController do
       let(:user) { create(:user, role: :user) }
 
       it 'does not delete model for non-super user' do
-        request.headers['Authorization'] = "Bearer #{jwt}"
+        request.headers.merge!(authorization)
         model = create(:model)
 
         delete :destroy, params: { id: model.id }, format: :json
