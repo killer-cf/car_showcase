@@ -39,6 +39,9 @@ describe Api::V1::UsersController do
       json_response = response.parsed_body['user']
       expect(json_response['name']).to eq(user.name)
       expect(json_response['tax_id']).to eq(user.tax_id)
+      expect(json_response['email']).to eq(user[:email])
+      expect(json_response['avatar']).to be_nil
+      expect(json_response['role']).to eq('USER')
     end
   end
 
@@ -48,7 +51,7 @@ describe Api::V1::UsersController do
 
       it 'creates a new User without avatar' do
         expect do
-          post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', email: 'kilder@gmail.com' } },
+          post :create, params: { user: attributes_for(:user) },
                         format: :json
         end.to change(User, :count).by(1)
       end
@@ -56,7 +59,7 @@ describe Api::V1::UsersController do
       it 'creates a new User with avatar' do
         expect do
           post :create,
-               params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', avatar:, email: 'kilder@gmail.com' } },
+               params: { user: attributes_for(:user).merge(avatar: avatar) },
                format: :json
         end.to change(User, :count).by(1)
         json_response = response.parsed_body['user']
@@ -64,14 +67,18 @@ describe Api::V1::UsersController do
       end
 
       it 'renders a JSON response with the new user' do
-        post :create, params: { user: { name: 'Kilder', tax_id: '31.576.685/0001-42', email: 'kilder@gmail.com' } },
-                      format: :json
+        user = attributes_for(:user)
+
+        post :create, params: { user: }, format: :json
 
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
         json_response = response.parsed_body['user']
-        expect(json_response['name']).to eq('Kilder')
-        expect(json_response['tax_id']).to eq('31.576.685/0001-42')
+        expect(json_response['name']).to eq(user[:name])
+        expect(json_response['tax_id']).to eq(user[:tax_id])
+        expect(json_response['email']).to eq(user[:email])
+        expect(json_response['avatar']).to be_nil
+        expect(json_response['role']).to eq('USER')
       end
     end
 
@@ -96,6 +103,23 @@ describe Api::V1::UsersController do
         user.reload
         expect(user.name).to eq('Kilder')
       end
+    end
+  end
+
+  describe 'GET #show_by_supabase_id' do
+    it 'returns a success response' do
+      user = create(:user)
+
+      get :show_by_supabase_id, params: { supabase_id: user.supabase_id }, format: :json
+
+      expect(response).to be_successful
+      expect(response.content_type).to eq('application/json; charset=utf-8')
+      json_response = response.parsed_body['user']
+      expect(json_response['name']).to eq(user.name)
+      expect(json_response['tax_id']).to eq(user.tax_id)
+      expect(json_response['email']).to eq(user[:email])
+      expect(json_response['avatar']).to be_nil
+      expect(json_response['role']).to eq('USER')
     end
   end
 end

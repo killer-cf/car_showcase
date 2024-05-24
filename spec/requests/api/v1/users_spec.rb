@@ -52,7 +52,7 @@ RSpec.describe 'api/v1/users' do
 
       response '201', 'user created' do
         let(:avatar) { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/files/person.jpeg'), 'image/jpeg') }
-        let(:user) { { name: 'foo', tax_id: '31.576.685/0001-42', avatar:, email: 'foo@gmail.com' } }
+        let(:user) { attributes_for(:user).merge(avatar: avatar) }
         run_test!
       end
 
@@ -133,6 +133,52 @@ RSpec.describe 'api/v1/users' do
       tags 'Users'
       response(204, 'successful') do
         let(:id) { create(:user).id }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/supabase/users/{supabase_id}' do
+    parameter name: 'supabase_id', in: :path, type: :string, description: 'supabase user id'
+
+    get('show user') do
+      tags 'Users'
+      response(200, 'successful') do
+        example 'application/json', :example_key, { id: 'string-uuid', name: 'Kilder', tax_id: '31.576.685/0001-42' }
+        schema type: :object,
+               properties: {
+                 user: {
+                   type: :object,
+                   properties: {
+                     id: { type: :string },
+                     name: { type: :string },
+                     emai: { type: :string },
+                     role: { type: :string },
+                     tax_id: { type: :string },
+                     created_at: { type: :string },
+                     avatar: {
+                       type: :object,
+                       nullable: true,
+                       properties: {
+                         id: { type: :string },
+                         url: { type: :string }
+                       }
+                     },
+                     employee: {
+                       type: :object,
+                       nullable: true,
+                       properties: {
+                         id: { type: :string },
+                         store_id: { type: :string }
+                       }
+                     }
+                   },
+                   required: %w[id name tax_id created_at]
+                 }
+               },
+               required: ['user']
+
+        let(:supabase_id) { create(:user, name: 'Joao', tax_id: '31.576.685/0001-42').supabase_id }
         run_test!
       end
     end

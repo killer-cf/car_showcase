@@ -750,3 +750,26 @@ paths:
       responses:
         '204':
           description: successful
+  "/api/v1/supabase/users/{supabase_id}":
+    parameters:
+    - name: supabase_id
+      in: path
+      description: supabase user id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show user
+      tags:
+      - Users
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                example_key:
+                  value:
+                    id: string-uuid
+                    name: Kilder
+                    tax_id: 31.576.685/0001-42
